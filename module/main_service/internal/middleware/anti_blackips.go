@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"context"
-	"strings"
+	"graduation-project/module/common/constant"
 
 	"graduation-project/module/main_service/internal/config"
-	"graduation-project/module/main_service/internal/constant"
 	"graduation-project/module/main_service/internal/log"
+	"graduation-project/module/main_service/internal/tools"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
@@ -14,14 +14,11 @@ import (
 
 func AntiBlackIPs(ctx *gin.Context) {
 	var (
-		reqId = ctx.GetString(constant.CtxKeyRequestID)
+		reqId    = ctx.GetString(constant.CtxKeyRequestID)
+		remoteIP = ctx.GetString(constant.CtxKeyRemoteIP)
 	)
 
-	parts := strings.Split(ctx.Request.RemoteAddr, ":")
-	ctx.Set(constant.CtxKeyRemoteIP, parts[0])
-	ctx.Set(constant.CtxKeyRemotePort, parts[1])
-
-	stamp, err := config.GetRedisCli().Get(context.Background(), constant.RedisKeyIPStamp).Bytes()
+	stamp, err := config.GetRedisCli().Get(context.Background(), tools.GetRedisKeyIPStamps(remoteIP)).Bytes()
 	if err != nil && err != redis.Nil {
 		log.Errorf(reqId, "failed get ip stamp")
 	} else {

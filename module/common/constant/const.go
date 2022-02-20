@@ -43,7 +43,7 @@ const (
 // RedisKey
 const (
 	RedisKeyNonce   = "req-nonce-"
-	RedisKeyIPStamp = "spider-ips"
+	RedisKeyIPStamp = "spider-ips-"
 )
 
 // IP Stamp Constants
@@ -56,7 +56,16 @@ const (
 
 // ETCD Key
 const (
+	// ETCD Config
+	EtcdKeyMysqlConfig   = "mysql-config"
+	EtcdKeyKafkaConfig   = "kafka-config"
+	EtcdKeyESConfig      = "elastic-config"
 	EtcdKeyCaptchaConfig = "captcha-config"
+)
+
+// Kafka Key
+const (
+	KafkaKeyLogTopic = "kafka-log"
 )
 
 // URL constant

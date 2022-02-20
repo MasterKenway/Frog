@@ -10,15 +10,14 @@ import (
 )
 
 var (
-	kafkaProducer *sarama.AsyncProducer
+	KafkaConsumer *sarama.ConsumerGroup
 	KafkaConf     *config.KafkaConfig
 )
 
-func GetKafkaProducer() sarama.AsyncProducer {
-	if kafkaProducer != nil {
-		return *kafkaProducer
+func GetKafkaConsumer() *sarama.ConsumerGroup {
+	if KafkaConsumer != nil {
+		return KafkaConsumer
 	}
-
 	kafkaEtcdConfBytes, err := GetConfig(constant.EtcdKeyKafkaConfig)
 	if err != nil {
 		panic(err)
@@ -30,15 +29,11 @@ func GetKafkaProducer() sarama.AsyncProducer {
 	}
 
 	kafkaConfig := sarama.NewConfig()
-	kafkaConfig.Producer.RequiredAcks = sarama.WaitForAll
-	kafkaConfig.Producer.Partitioner = sarama.NewRandomPartitioner
-	kafkaConfig.Producer.Return.Errors = true
-	p, err := sarama.NewAsyncProducer(KafkaConf.Endpoint, kafkaConfig)
-	if err != nil {
-		panic(err)
-	}
-	kafkaProducer = &p
-	return *kafkaProducer
+	kafkaConfig.Consumer.Offsets.Initial = sarama.OffsetOldest
+	consumer, err := sarama.NewConsumerGroup(KafkaConf.Endpoint, KafkaConf.GroupID, kafkaConfig)
+	KafkaConsumer = &consumer
+
+	return KafkaConsumer
 }
 
 func GetKafkaTopic(topicKey string) string {

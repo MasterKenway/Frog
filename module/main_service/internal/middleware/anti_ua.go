@@ -1,12 +1,12 @@
 package middleware
 
 import (
+	"graduation-project/module/common/constant"
+	"graduation-project/module/common/model/db_models"
 	"regexp"
 
 	"graduation-project/module/main_service/internal/config"
-	"graduation-project/module/main_service/internal/constant"
 	"graduation-project/module/main_service/internal/log"
-	"graduation-project/module/main_service/internal/model/db_models"
 	"graduation-project/module/main_service/internal/tools"
 
 	"github.com/gin-gonic/gin"

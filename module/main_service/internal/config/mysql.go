@@ -1,8 +1,13 @@
 package config
 
 import (
+	"encoding/json"
+	"fmt"
+	"graduation-project/module/common/constant"
+
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"graduation-project/module/common/config"
 )
 
 var (
@@ -14,7 +19,18 @@ func GetMysqlCli() *gorm.DB {
 		return mysqlCli
 	}
 
-	db, err := gorm.Open(mysql.Open("user:pass@tcp(127.0.0.1:3306)/dbname?charset=utf8mb4&parseTime=True&loc=Local"), &gorm.Config{})
+	mysqlEtcdConfigBytes, err := GetConfig(constant.EtcdKeyMysqlConfig)
+	if err != nil {
+		panic(err)
+	}
+
+	var mysqlConf config.MysqlConfig
+	err = json.Unmarshal(mysqlEtcdConfigBytes, &mysqlConf)
+	if err != nil {
+		panic(err)
+	}
+
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/dbname?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port)), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

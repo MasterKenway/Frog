@@ -2,10 +2,10 @@ package controller
 
 import (
 	"encoding/json"
+	"graduation-project/module/common/constant"
+	"graduation-project/module/common/model/api_models"
 	"net/http"
 
-	"graduation-project/module/main_service/internal/constant"
-	"graduation-project/module/main_service/internal/model/api_models"
 	"graduation-project/module/main_service/internal/tools"
 
 	"github.com/buger/jsonparser"

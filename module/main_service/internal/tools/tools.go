@@ -2,7 +2,8 @@ package tools
 
 import (
 	"github.com/gin-gonic/gin"
-	"graduation-project/module/main_service/internal/model/api_models"
+	"graduation-project/module/common/constant"
+	"graduation-project/module/common/model/api_models"
 	"math/rand"
 	"net/http"
 	"time"
@@ -43,4 +44,8 @@ func RandStr(n int) string {
 		remain--
 	}
 	return string(b)
+}
+
+func GetRedisKeyIPStamps(ip string) string {
+	return constant.RedisKeyIPStamp + ip
 }

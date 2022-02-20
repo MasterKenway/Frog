@@ -3,7 +3,7 @@ package config
 import (
 	"context"
 	"encoding/json"
-	"graduation-project/module/main_service/internal/constant"
+	"graduation-project/module/common/constant"
 )
 
 var (

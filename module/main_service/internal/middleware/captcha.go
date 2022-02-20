@@ -2,15 +2,15 @@ package middleware
 
 import (
 	"encoding/json"
+	"graduation-project/module/common/constant"
+	"graduation-project/module/common/model/api_models"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
 
 	"graduation-project/module/main_service/internal/config"
-	"graduation-project/module/main_service/internal/constant"
 	"graduation-project/module/main_service/internal/log"
-	"graduation-project/module/main_service/internal/model/api_models"
 	"graduation-project/module/main_service/internal/tools"
 
 	"github.com/buger/jsonparser"
@@ -52,7 +52,6 @@ func Captcha(ctx *gin.Context) {
 }
 
 func ValidateCaptcha(ticket, randStr, reqId, ip string) error {
-	//secretId, secretKey := config.GetCaptchaSecret()
 	params := tools.TCParam{
 		"Action":       "DescribeCaptchaResult",
 		"Version":      "2019-07-22",

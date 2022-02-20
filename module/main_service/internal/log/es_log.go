@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+	"graduation-project/module/common/constant"
 	"graduation-project/module/main_service/internal/config"
 
 	"github.com/Shopify/sarama"
@@ -47,46 +48,46 @@ func init() {
 
 	kw := KafkaWriter{
 		Producer: config.GetKafkaProducer(),
-		Topic:    "",
+		Topic:    config.GetKafkaTopic(constant.KafkaKeyLogTopic),
 	}
 	topicError := zapcore.AddSync(kw)
 	kafkaEncoder := zapcore.NewJSONEncoder(zap.NewDevelopmentEncoderConfig())
 	kafkaCore := zapcore.NewCore(kafkaEncoder, topicError, lowPriority)
 	core := zapcore.NewTee(kafkaCore)
 
-	logger = customLogger{log: zap.New(core).Sugar()}
+	logger = customLogger{log: zap.New(core).WithOptions().Sugar()}
 }
 
 func Info(reqId string, a ...interface{}) {
-	logger.log.Info(append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Info(a...)
+
 }
 
 func Infof(format, reqId string, a ...interface{}) {
-	logger.log.Infof(format, append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Infof(format, a...)
 }
 
 func Debug(reqId string, a ...interface{}) {
-	logger.log.Debug(append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Debug(a...)
 }
 
 func Debugf(reqId, format string, a ...interface{}) {
-	logger.log.Debugf(format, append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Debugf(format, a...)
 }
 
 func Error(reqId string, a ...interface{}) {
-	logger.log.Error(append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Error(a...)
 
 }
 
 func Errorf(reqId, format string, a ...interface{}) {
-	logger.log.Errorf(format, append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Errorf(format, a...)
 }
 
 func Warn(reqId string, a ...interface{}) {
-	logger.log.Warn(append([]interface{}{"request_id", reqId}, a...))
-
+	logger.log.With("RID", reqId).Warn(a...)
 }
 
 func Warnf(reqId, format string, a ...interface{}) {
-	logger.log.Warnf(format, append([]interface{}{"request_id", reqId}, a...))
+	logger.log.With("RID", reqId).Warnf(format, a...)
 }

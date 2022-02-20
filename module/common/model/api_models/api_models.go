@@ -1,6 +1,9 @@
 package api_models
 
-import "encoding/json"
+import (
+	"encoding/json"
+	"time"
+)
 
 type ControllerAdapter func() ApiInterface
 
@@ -39,4 +42,12 @@ type CaptchaResponseInfo struct {
 	EvilLevel      int    `json:"EvilLevel"`
 	GetCaptchaTime int    `json:"GetCaptchaTime"`
 	RequestId      string `json:"RequestId"`
+}
+
+type RawLog struct {
+	Time      time.Time `json:"T"`
+	Level     string    `json:"L,omitempty"`
+	Caller    string    `json:"C,omitempty"`
+	RequestID string    `json:"RID,omitempty"`
+	Message   string    `json:"M,omitempty"`
 }
