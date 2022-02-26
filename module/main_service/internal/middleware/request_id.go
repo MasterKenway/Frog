@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"bytes"
-	"graduation-project/module/common/constant"
+	"frog/module/common/constant"
 	"io/ioutil"
 	"strings"
 
-	"graduation-project/module/main_service/internal/tools"
+	"frog/module/main_service/internal/tools"
 
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"

@@ -3,11 +3,11 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"graduation-project/module/common/constant"
+	"frog/module/common/constant"
 
+	"frog/module/common/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"graduation-project/module/common/config"
 )
 
 var (

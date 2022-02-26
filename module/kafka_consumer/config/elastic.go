@@ -3,8 +3,8 @@ package config
 import (
 	"encoding/json"
 
-	"graduation-project/module/common/config"
-	"graduation-project/module/common/constant"
+	"frog/module/common/config"
+	"frog/module/common/constant"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"

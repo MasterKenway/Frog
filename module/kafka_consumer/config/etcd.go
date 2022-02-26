@@ -2,9 +2,9 @@ package config
 
 import (
 	"context"
+	"frog/module/common"
 	perrors "github.com/pkg/errors"
 	"go.etcd.io/etcd/client/v3"
-	"graduation-project/module/common"
 	"time"
 )
 

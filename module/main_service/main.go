@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"graduation-project/module/common/constant"
+	"frog/module/common/constant"
 	"log"
 	"net/http"
 	"os"
@@ -10,9 +10,9 @@ import (
 	"syscall"
 	"time"
 
-	"graduation-project/module/common"
-	"graduation-project/module/main_service/internal/controller"
-	"graduation-project/module/main_service/internal/middleware"
+	"frog/module/common"
+	"frog/module/main_service/internal/controller"
+	"frog/module/main_service/internal/middleware"
 
 	"github.com/gin-gonic/gin"
 )

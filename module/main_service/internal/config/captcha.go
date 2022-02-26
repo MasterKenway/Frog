@@ -3,7 +3,8 @@ package config
 import (
 	"context"
 	"encoding/json"
-	"graduation-project/module/common/constant"
+
+	"frog/module/common/constant"
 )
 
 var (

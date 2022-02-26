@@ -1,7 +1,7 @@
 package log
 
 import (
-	"graduation-project/module/common"
+	"frog/module/common"
 	"os"
 
 	"go.uber.org/zap"

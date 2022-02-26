@@ -6,7 +6,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"graduation-project/module/common"
+	"frog/module/common"
 )
 
 func main() {

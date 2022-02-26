@@ -8,12 +8,12 @@ import (
 	"sync"
 	"time"
 
-	"graduation-project/module/common"
-	"graduation-project/module/common/constant"
-	"graduation-project/module/common/model/api_models"
-	"graduation-project/module/common/model/es_model"
-	"graduation-project/module/kafka_consumer/config"
-	"graduation-project/module/kafka_consumer/log"
+	"frog/module/common"
+	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
+	"frog/module/common/model/es_model"
+	"frog/module/kafka_consumer/config"
+	"frog/module/kafka_consumer/log"
 
 	"github.com/Shopify/sarama"
 )

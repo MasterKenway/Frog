@@ -2,11 +2,11 @@ package middleware
 
 import (
 	"context"
-	"graduation-project/module/common/constant"
+	"frog/module/common/constant"
 
-	"graduation-project/module/main_service/internal/config"
-	"graduation-project/module/main_service/internal/log"
-	"graduation-project/module/main_service/internal/tools"
+	"frog/module/main_service/internal/config"
+	"frog/module/main_service/internal/log"
+	"frog/module/main_service/internal/tools"
 
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"

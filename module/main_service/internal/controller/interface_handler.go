@@ -2,11 +2,11 @@ package controller
 
 import (
 	"encoding/json"
-	"graduation-project/module/common/constant"
-	"graduation-project/module/common/model/api_models"
+	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
 	"net/http"
 
-	"graduation-project/module/main_service/internal/tools"
+	"frog/module/main_service/internal/tools"
 
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"

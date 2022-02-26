@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"graduation-project/module/common/model/api_models"
+	"frog/module/common/model/api_models"
 )
 
 var (

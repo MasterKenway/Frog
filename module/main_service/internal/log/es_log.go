@@ -2,8 +2,8 @@ package log
 
 import (
 	"fmt"
-	"graduation-project/module/common/constant"
-	"graduation-project/module/main_service/internal/config"
+	"frog/module/common/constant"
+	"frog/module/main_service/internal/config"
 
 	"github.com/Shopify/sarama"
 	"go.uber.org/zap"

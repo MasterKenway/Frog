@@ -2,14 +2,14 @@ package middleware
 
 import (
 	"context"
-	"graduation-project/module/common/constant"
-	"graduation-project/module/common/model/db_models"
+	"frog/module/common/constant"
+	"frog/module/common/model/db_models"
 	"strconv"
 	"time"
 
-	"graduation-project/module/main_service/internal/config"
-	"graduation-project/module/main_service/internal/log"
-	"graduation-project/module/main_service/internal/tools"
+	"frog/module/main_service/internal/config"
+	"frog/module/main_service/internal/log"
+	"frog/module/main_service/internal/tools"
 
 	"github.com/gin-gonic/gin"
 )

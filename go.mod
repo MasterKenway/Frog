@@ -1,4 +1,4 @@
-module graduation-project
+module frog
 
 go 1.16
 

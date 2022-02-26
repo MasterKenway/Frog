@@ -1,9 +1,9 @@
 package tools
 
 import (
+	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
 	"github.com/gin-gonic/gin"
-	"graduation-project/module/common/constant"
-	"graduation-project/module/common/model/api_models"
 	"math/rand"
 	"net/http"
 	"time"
