@@ -1,8 +1,10 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"sync"
 	"time"
 
@@ -14,11 +16,10 @@ import (
 	"graduation-project/module/kafka_consumer/log"
 
 	"github.com/Shopify/sarama"
-	"github.com/olivere/elastic/v7"
 )
 
 var (
-	consumeChan = make(chan struct{}, 3)
+	consumeChan = make(chan struct{}, 10)
 	messages    = make([]*sarama.ConsumerMessage, 0)
 	lock        = sync.Mutex{}
 )
@@ -52,7 +53,10 @@ func consumeLoop() {
 			return
 		case <-ticker.C:
 			lock.Lock()
-			consumeChan <- struct{}{}
+			msgs := messages
+			messages = make([]*sarama.ConsumerMessage, 0)
+			lock.Unlock()
+			consume(msgs)
 		case <-consumeChan:
 			lock.Lock()
 			msgs := messages
@@ -64,7 +68,11 @@ func consumeLoop() {
 }
 
 func consume(msgs []*sarama.ConsumerMessage) {
-	rawLogs := make([]api_models.RawLog, 0)
+	var (
+		ctx     = context.Background()
+		rawLogs = make([]api_models.RawLog, 0)
+	)
+
 	for _, msg := range msgs {
 		var rawLog api_models.RawLog
 		err := json.Unmarshal(msg.Value, &rawLog)
@@ -86,21 +94,38 @@ func consume(msgs []*sarama.ConsumerMessage) {
 		})
 	}
 
-	req := config.GetESCli().Bulk().Index(config.GetESIndexName(es_model.ESLog{}.Index()))
-	for _, esLog := range esLogs {
-		jsonData, _ := json.Marshal(esLog)
-		doc := elastic.NewBulkIndexRequest().Doc(jsonData)
-		req.Add(doc)
+	indexer, err := config.GetESIndexer(es_model.ESLog{}.Index())
+	if err != nil {
+		log.Errorf("failed to get es indexer, %s", err.Error())
 	}
 
-	resp, err := req.Do(context.Background())
+	for _, esLog := range esLogs {
+		jsonData, _ := json.Marshal(esLog)
+		err := indexer.Add(ctx, esutil.BulkIndexerItem{
+			Action: "index",
+			Body:   bytes.NewReader(jsonData),
+			OnFailure: func(ctx context.Context, item esutil.BulkIndexerItem, respItem esutil.BulkIndexerResponseItem, err error) {
+				log.Errorf("bulk index failed, result: %s", respItem.Result)
+				if err != nil {
+					log.Errorf("bulk index failed, err: %s", err.Error())
+				}
+			},
+		})
+		if err != nil {
+			log.Errorf("indexer.Add %s", err.Error())
+			continue
+		}
+	}
+
+	err = indexer.Close(ctx)
 	if err != nil {
-		log.Errorf("failed to save log to es, %s", err.Error())
+		log.Errorf("indexer.Close %s", err.Error())
 		return
 	}
 
-	for _, item := range resp.Failed() {
-		log.Errorf("resp.Failed: %s", item.Result)
+	stats := indexer.Stats()
+	if stats.NumFailed > 0 {
+		log.Errorf("stats.NumFailed %d", stats.NumFailed)
 	}
 }
 

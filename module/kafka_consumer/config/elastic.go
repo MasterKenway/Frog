@@ -2,22 +2,20 @@ package config
 
 import (
 	"encoding/json"
-	"log"
-	"os"
-	"time"
 
 	"graduation-project/module/common/config"
 	"graduation-project/module/common/constant"
 
-	"github.com/olivere/elastic/v7"
+	"github.com/elastic/go-elasticsearch/v8"
+	"github.com/elastic/go-elasticsearch/v8/esutil"
 )
 
 var (
-	esCli  *elastic.Client
+	esCli  *elasticsearch.Client
 	esConf config.ElasticConfig
 )
 
-func GetESCli() *elastic.Client {
+func GetESCli() *elasticsearch.Client {
 	if esCli != nil {
 		return esCli
 	}
@@ -32,19 +30,20 @@ func GetESCli() *elastic.Client {
 		panic(err)
 	}
 
-	esCli, err = elastic.NewClient(
-		elastic.SetURL(esConf.Urls...),
-		elastic.SetBasicAuth(esConf.Username, esConf.Password),
-		elastic.SetSniff(false),
-		elastic.SetHealthcheckInterval(1*time.Minute),
-		elastic.SetGzip(true),
-		elastic.SetErrorLog(log.New(os.Stderr, "Elastic ", log.LstdFlags)),
-		elastic.SetInfoLog(log.New(os.Stdout, "Elastic ", log.LstdFlags)),
-	)
+	esCli, err = elasticsearch.NewClient(elasticsearch.Config{
+		Addresses:         esConf.Urls,
+		Username:          esConf.Username,
+		Password:          esConf.Password,
+		MaxRetries:        5,
+		EnableDebugLogger: true,
+	})
 
 	return esCli
 }
 
-func GetESIndexName(index string) string {
-	return esConf.ESIndex[index]
+func GetESIndexer(index string) (esutil.BulkIndexer, error) {
+	return esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
+		Index:  esConf.ESIndex[index],
+		Client: GetESCli(),
+	})
 }
