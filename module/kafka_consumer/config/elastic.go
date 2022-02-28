@@ -41,6 +41,10 @@ func GetESCli() *elasticsearch.Client {
 	return esCli
 }
 
+func GetESIndexByConfig(configIndexKey string) string {
+	return esConf.ESIndex[configIndexKey]
+}
+
 func GetESIndexer(index string) (esutil.BulkIndexer, error) {
 	return esutil.NewBulkIndexer(esutil.BulkIndexerConfig{
 		Index:  esConf.ESIndex[index],

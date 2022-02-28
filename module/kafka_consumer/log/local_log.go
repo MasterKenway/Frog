@@ -1,8 +1,9 @@
 package log
 
 import (
-	"frog/module/common"
 	"os"
+
+	"frog/module/common"
 
 	"go.uber.org/zap"
 )

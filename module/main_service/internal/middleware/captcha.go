@@ -2,13 +2,13 @@ package middleware
 
 import (
 	"encoding/json"
-	"frog/module/common/constant"
-	"frog/module/common/model/api_models"
 	"io/ioutil"
 	"net/http"
 	"strconv"
 	"time"
 
+	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
 	"frog/module/main_service/internal/config"
 	"frog/module/main_service/internal/log"
 	"frog/module/main_service/internal/tools"
@@ -37,13 +37,13 @@ func Captcha(ctx *gin.Context) {
 		randStr, _ := jsonparser.GetString(reqBodyBytes, "RandStr")
 
 		if ticket == "" || randStr == "" {
-			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeBadRequest, constant.MsgTicketOrRandStrNotExists)
+			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaNeeded, constant.MsgCaptchaNeeded)
 			return
 		}
 
 		err := ValidateCaptcha(ticket, randStr, reqId, remoteIP)
 		if err != nil {
-			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeBadRequest, constant.MsgCaptchaValidateFailed)
+			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaInvalid, constant.MsgCaptchaInvalid)
 			return
 		}
 	}

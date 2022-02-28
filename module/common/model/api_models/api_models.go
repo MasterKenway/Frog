@@ -2,13 +2,14 @@ package api_models
 
 import (
 	"encoding/json"
+	"github.com/gin-gonic/gin"
 	"time"
 )
 
 type ControllerAdapter func() ApiInterface
 
 type ApiInterface interface {
-	GetResult() (interface{}, error)
+	GetResult(ctx *gin.Context) (interface{}, *APIError)
 }
 
 type Request struct {
@@ -21,12 +22,17 @@ type APIResponse struct {
 	ResponseInfo `json:"Response"`
 }
 
+type APIError struct {
+	Code    string
+	Message string
+}
+
 type ResponseInfo struct {
-	Code      string      `json:"Code"`
-	Message   string      `json:"Message"`
-	Data      interface{} `json:"Data"`
-	Error     interface{} `json:"Error"`
-	RequestID string      `json:"RequestID"`
+	Code      string      `json:"Code,omitempty"`
+	Message   string      `json:"Message,omitempty"`
+	Data      interface{} `json:"Data,omitempty"`
+	Error     interface{} `json:"Error,omitempty"`
+	RequestID string      `json:"RequestID,omitempty"`
 }
 
 // CaptchaResponse 与天御相应交互的结构体定义

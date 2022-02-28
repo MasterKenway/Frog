@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"frog/module/common/constant"
 	"log"
 	"net/http"
 	"os"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"frog/module/common"
+	"frog/module/common/constant"
 	"frog/module/main_service/internal/controller"
 	"frog/module/main_service/internal/middleware"
 
@@ -25,6 +25,7 @@ func main() {
 	r.Use(middleware.AntiBlackIPs)
 	r.Use(middleware.AntiUA)
 	r.Use(middleware.Captcha)
+	r.Use(middleware.ValidateLogin)
 
 	r.POST(constant.InterfaceEntry, controller.InterfaceHandler)
 

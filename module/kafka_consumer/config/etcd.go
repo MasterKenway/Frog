@@ -19,7 +19,7 @@ func GetEtcdCli() *clientv3.Client {
 
 	var err error
 	etcdCli, err = clientv3.New(clientv3.Config{
-		Endpoints:   []string{""},
+		Endpoints:   []string{"http://10.10.0.2:2379"},
 		DialTimeout: 2 * time.Second,
 	})
 	if err != nil {

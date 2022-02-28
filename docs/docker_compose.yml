@@ -3,18 +3,43 @@ services:
   es:
     image: elasticsearch:8.0.0
     environment:
-      discovery: "type=single-node"
+      discovery.type: "single-node"
+      ingest.geoip.downloader.enabled: "false"
+      ES_JAVA_OPTS: "-Xms1g -Xmx1g"
       ELASTIC_PASSWORD: "example"
       KIBANA_PASSWORD: "example"
     ports:
       - "9200:9200"
       - "9300:9300"
+    networks:
+      default:
+        ipv4_address: 10.10.0.9
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.0.0
+    ports:
+      - "5601:5601"
+    networks:
+      default:
+        ipv4_address: 10.10.0.2
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      ELASTICSEARCH_URL: "http://10.10.0.9:9200"
+      ELASTICSEARCH_USERNAME: "kibana_system"
+      ELASTICSEARCH_PASSWORD: "example"
+    depends_on:
+      - es
   kafka:
     image: bitnami/kafka:3-debian-10
     environment:
       KAFKA_CLIENT_USERS: "kafka"
       KAFKA_CLIENT_PASSWORDS: "example"
       ALLOW_PLAINTEXT_LISTENER: "yes"
+    volumes:
+      - ./kraft.sh:/tmp/kraft.sh
+    command: "bash -c 'if [ ! -f /tmp/kraft.sh ]; then echo \"ERROR: Did you forget the kraft.sh file that came with this docker-compose.yml file?\" && exit 1 ; else /tmp/kraft.sh && /etc/confluent/docker/run ; fi'"
+    networks:
+      default:
+        ipv4_address: 10.10.0.3
   etcd:
     image: quay.io/coreos/etcd:v3.3
     container_name: "etcd"
@@ -26,27 +51,42 @@ services:
       - "2379:2379"
       - "2380:2380"
       - "4001:4001"
+    networks:
+      default:
+        ipv4_address: 10.10.0.4
   etcd_keeper:
     image: evildecay/etcdkeeper:latest
     environment:
       HOST: "0.0.0.0"
     ports:
       - "12000:8080"
+    networks:
+      default:
+        ipv4_address: 10.10.0.5
     depends_on:
       - etcd
   mysql:
     image: mysql:8.0-debian
     environment:
       MYSQL_ROOT_PASSWORD: "example"
+    networks:
+      default:
+        ipv4_address: 10.10.0.6
   adminer:
     image: adminer
     restart: always
     ports:
       - "8080:8080"
+    networks:
+      default:
+        ipv4_address: 10.10.0.7
   redis:
     image: bitnami/redis:6.2-debian-10
     environment:
       REDIS_PASSWORD: "example"
+    networks:
+      default:
+        ipv4_address: 10.10.0.8
 
 networks:
   default:

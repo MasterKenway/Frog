@@ -49,3 +49,7 @@ func RandStr(n int) string {
 func GetRedisKeyIPStamps(ip string) string {
 	return constant.RedisKeyIPStamp + ip
 }
+
+func GetRedisKeyEmailCode(email string) string {
+	return constant.RedisKeyEmailCode + email
+}

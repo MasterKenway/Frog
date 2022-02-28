@@ -2,30 +2,44 @@ package constant
 
 // Response Code Constant
 const (
-	CodeSuccess = "200"
+	CodeSuccess = "2000"
 
-	CodeBadRequest = "403"
-	CodeForbidden  = "404"
+	CodeBadRequest       = "4003"
+	CodeForbidden        = "4004"
+	CodeLoginRequired    = "4001"
+	CodePwdDecFailed     = "4002"
+	CodePwdOrUsernameErr = "4003"
+	CodeEmailCodeInvalid = "4004"
+	CodeSendEmailFailed  = "4005"
+	CodeCaptchaNeeded    = "4006"
+	CodeCaptchaInvalid   = "4007"
+	CodeUserExists       = "4008"
 
-	CodeInternalError = "500"
+	CodeInternalError = "5000"
 )
 
 // Response Msg Constant
 const (
 	MsgSuccess = "Success"
 
-	MsgApiNotExists             = "Api Not Exists"
-	MsgIllegalRequest           = "Illegal Request"
-	MsgParamInvalid             = "Request Param Invalid"
-	MsgTimeStampOutdated        = "Timestamp is Invalid"
-	MsgTicketOrRandStrNotExists = "Ticket or RandStr Not Exists"
-	MsgCaptchaValidateFailed    = "Captcha Validate Failed"
+	MsgApiNotExists      = "Api Not Exists"
+	MsgIllegalRequest    = "Illegal Request"
+	MsgParamInvalid      = "Request Param Invalid"
+	MsgTimeStampOutdated = "Timestamp is Invalid"
+	MsgNotLogin          = "Login Required"
+	MsgPwdOrUsernameErr  = "Password or Username Error"
+	MsgCaptchaNeeded     = "Captcha is Needed"
+	MsgCaptchaInvalid    = "Captcha is Invalid"
+	MsgEmailCodeInvalid  = "Email Code is Invalid"
+	MsgUserExists        = "Username Exists"
 
 	MsgInternalError = "Internal Error"
 )
 
 // Header Constant
 const (
+	CookieKeyLoginCert = "x-login-status"
+
 	HeaderKeyTimeStamp = "x-timestamp"
 	HeaderKeyNonce     = "x-nonce"
 	HeaderKeyRequestID = "x-request-id"
@@ -38,12 +52,14 @@ const (
 	CtxKeyIsProxy     = "is-proxy"
 	CtxKeyIsBot       = "is-bot"
 	CtxKeyIsQuickConn = "is-quick-conn"
+	CtxKeyUserInfo    = "x-user-info"
 )
 
 // RedisKey
 const (
-	RedisKeyNonce   = "req-nonce-"
-	RedisKeyIPStamp = "spider-ips-"
+	RedisKeyNonce     = "req-nonce-"
+	RedisKeyIPStamp   = "spider-ips-"
+	RedisKeyEmailCode = "email-code-"
 )
 
 // IP Stamp Constants
@@ -58,9 +74,11 @@ const (
 const (
 	// ETCD Config
 	EtcdKeyMysqlConfig   = "mysql-config"
+	EtcdKeyRedisConfig   = "redis-config"
 	EtcdKeyKafkaConfig   = "kafka-config"
 	EtcdKeyESConfig      = "elastic-config"
 	EtcdKeyCaptchaConfig = "captcha-config"
+	EtcdKeyEmailConfig   = "email-config"
 )
 
 // Kafka Key

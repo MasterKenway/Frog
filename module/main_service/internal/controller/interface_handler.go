@@ -50,11 +50,12 @@ func InterfaceHandler(ctx *gin.Context) {
 		return
 	}
 
-	result, err := controller.GetResult()
-	if err != nil {
+	result, apiErr := controller.GetResult(ctx)
+	if apiErr != nil {
 		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
 			RequestID: reqId,
-			Message:   err.Error(),
+			Code:      apiErr.Code,
+			Message:   apiErr.Message,
 			Error:     result,
 		}})
 	} else {
