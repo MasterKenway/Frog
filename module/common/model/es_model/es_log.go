@@ -3,17 +3,19 @@ package es_model
 import "time"
 
 var (
-	essLogMapping = `{
-    "mapping": {
+	essLogMapping = `
+{
+    "mappings": {
         "properties": {
-            "time": { "type": "keyword" },
+            "time": { "type": "date" },
             "level": { "type": "keyword" },
             "caller": { "type": "text" },
             "request_id": { "type": "keyword" },
             "message": { "type": "text" }
         }
     }
-}`
+}
+`
 )
 
 type ESLog struct {

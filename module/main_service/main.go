@@ -9,8 +9,8 @@ import (
 	"syscall"
 	"time"
 
-	"frog/module/common"
 	"frog/module/common/constant"
+	"frog/module/common/tools"
 	"frog/module/main_service/internal/controller"
 	"frog/module/main_service/internal/middleware"
 
@@ -18,14 +18,20 @@ import (
 )
 
 func main() {
-	r := gin.Default()
+	go func() {
+		<-tools.CronService.Start()
+	}()
 
-	r.Use(middleware.RequestID)
-	r.Use(middleware.AntiRepeat)
-	r.Use(middleware.AntiBlackIPs)
-	r.Use(middleware.AntiUA)
-	r.Use(middleware.Captcha)
-	r.Use(middleware.ValidateLogin)
+	r := gin.New()
+	r.Use(
+		middleware.Logger,
+		middleware.RequestID,
+		middleware.AntiRepeat,
+		middleware.AntiBlackIPs,
+		middleware.AntiUA,
+		middleware.Captcha,
+		middleware.ValidateLogin,
+	)
 
 	r.POST(constant.InterfaceEntry, controller.InterfaceHandler)
 
@@ -51,7 +57,7 @@ func main() {
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
 	log.Println("Shutting down server...")
-	close(common.Done)
+	close(tools.Done)
 	// The context is used to inform the server it has 5 seconds to finish
 	// the request it is currently handling
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)

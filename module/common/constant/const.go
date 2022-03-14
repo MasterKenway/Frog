@@ -40,9 +40,10 @@ const (
 const (
 	CookieKeyLoginCert = "x-login-status"
 
-	HeaderKeyTimeStamp = "x-timestamp"
-	HeaderKeyNonce     = "x-nonce"
-	HeaderKeyRequestID = "x-request-id"
+	HeaderKeyTimeStamp     = "x-timestamp"
+	HeaderKeyNonce         = "x-nonce"
+	HeaderKeyRequestID     = "x-request-id"
+	HeaderKeyXForwardedFor = "x-forwarded-for"
 
 	CtxKeyRemoteIP    = "remote-ip"
 	CtxKeyRemotePort  = "remote-port"
@@ -60,6 +61,7 @@ const (
 	RedisKeyNonce     = "req-nonce-"
 	RedisKeyIPStamp   = "spider-ips-"
 	RedisKeyEmailCode = "email-code-"
+	RedisKeyLoginCert = "login-status-"
 )
 
 // IP Stamp Constants
@@ -83,7 +85,7 @@ const (
 
 // Kafka Key
 const (
-	KafkaKeyLogTopic = "kafka-log"
+	KafkaKeyLogTopic = "es-log"
 )
 
 // URL constant

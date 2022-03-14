@@ -1,15 +1,21 @@
 package main
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"syscall"
 
-	"frog/module/common"
+	"frog/module/common/tools"
+	"frog/module/kafka_consumer/log"
+	"frog/module/kafka_consumer/service"
 )
 
 func main() {
+
+	log.Info("Start server...")
+
+	service.ConsumeLog()
+	go service.ConsumeLoop()
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
@@ -19,6 +25,6 @@ func main() {
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down server...")
-	close(common.Done)
+	log.Info("Shutting down server...")
+	close(tools.Done)
 }

@@ -20,12 +20,13 @@ type KafkaWriter struct {
 }
 
 func (k KafkaWriter) Write(p []byte) (n int, err error) {
-	k.Producer.Input() <- &sarama.ProducerMessage{Topic: k.Topic, Key: nil, Value: sarama.ByteEncoder(p)}
+	k.Producer.Input() <- &sarama.ProducerMessage{Topic: k.Topic, Key: nil, Value: sarama.ByteEncoder(p), Partition: 0}
 	return len(p), nil
 }
 
 func (k *KafkaWriter) HandleErrors() {
 	for {
+
 		select {
 		case err := <-k.Producer.Errors():
 			fmt.Printf("k.Producer.Errors() %s\n", err.Error())
@@ -50,12 +51,14 @@ func init() {
 		Producer: config.GetKafkaProducer(),
 		Topic:    config.GetKafkaTopic(constant.KafkaKeyLogTopic),
 	}
+	go kw.HandleErrors()
 	topicError := zapcore.AddSync(kw)
-	kafkaEncoder := zapcore.NewJSONEncoder(zap.NewDevelopmentEncoderConfig())
+	encodeConfig := zap.NewDevelopmentEncoderConfig()
+	encodeConfig.EncodeTime = zapcore.RFC3339TimeEncoder
+	kafkaEncoder := zapcore.NewJSONEncoder(encodeConfig)
 	kafkaCore := zapcore.NewCore(kafkaEncoder, topicError, lowPriority)
 	core := zapcore.NewTee(kafkaCore)
-
-	logger = customLogger{log: zap.New(core).WithOptions().Sugar()}
+	logger = customLogger{log: zap.New(core).WithOptions(zap.AddCallerSkip(1)).Sugar()}
 }
 
 func Info(reqId string, a ...interface{}) {
@@ -63,7 +66,7 @@ func Info(reqId string, a ...interface{}) {
 
 }
 
-func Infof(format, reqId string, a ...interface{}) {
+func Infof(reqId string, format string, a ...interface{}) {
 	logger.log.With("RID", reqId).Infof(format, a...)
 }
 

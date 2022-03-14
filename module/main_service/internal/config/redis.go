@@ -13,14 +13,6 @@ var (
 	redisClient *redis.Client
 )
 
-func init() {
-
-	err := redisClient.Ping(context.Background()).Err()
-	if err != nil {
-		panic(err)
-	}
-}
-
 func GetRedisCli() *redis.Client {
 	if redisClient != nil {
 		return redisClient
@@ -42,6 +34,11 @@ func GetRedisCli() *redis.Client {
 		Password: conf.Password, // no password set
 		DB:       0,             // use default DB
 	})
+
+	err = redisClient.Ping(context.Background()).Err()
+	if err != nil {
+		panic(err)
+	}
 
 	return redisClient
 }

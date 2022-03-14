@@ -6,6 +6,7 @@ import (
 )
 
 type RedisUserInfo struct {
+	CookieKey string    `json:"cookie_key"`
 	Username  string    `json:"username,omitempty"`
 	Email     string    `json:"email,omitempty"`
 	LoginIPs  []string  `json:"login_ips,omitempty"`

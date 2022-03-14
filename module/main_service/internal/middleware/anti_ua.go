@@ -5,6 +5,7 @@ import (
 
 	"frog/module/common/constant"
 	"frog/module/common/model/db_models"
+	comTools "frog/module/common/tools"
 	"frog/module/main_service/internal/config"
 	"frog/module/main_service/internal/log"
 	"frog/module/main_service/internal/tools"
@@ -23,12 +24,12 @@ var (
 )
 
 func init() {
-	err := gocron.Every(1).Hour().From(gocron.NextTick()).Do(syncUAConfig)
+	err := comTools.CronService.Every(1).Hour().From(gocron.NextTick()).Do(syncUAConfig)
 	if err != nil {
 		log.Errorf("gocron-do", "failed to add cron job, %s", err.Error())
 	}
 
-	err = gocron.Every(1).Hour().From(gocron.NextTick()).Do(func() { uaCache = map[string]bool{} })
+	err = comTools.CronService.Every(1).Hour().From(gocron.NextTick()).Do(func() { uaCache = map[string]bool{} })
 	if err != nil {
 		log.Errorf("gocron-do", "failed to add cron job, %s", err.Error())
 	}

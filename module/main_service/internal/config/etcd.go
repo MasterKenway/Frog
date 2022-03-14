@@ -4,7 +4,7 @@ import (
 	"context"
 	"time"
 
-	"frog/module/common"
+	"frog/module/common/tools"
 
 	perrors "github.com/pkg/errors"
 	"go.etcd.io/etcd/client/v3"
@@ -14,6 +14,7 @@ var (
 	etcdCli *clientv3.Client
 )
 
+// GetEtcdCli endpoint 错误会导致程序被阻塞
 func GetEtcdCli() *clientv3.Client {
 	if etcdCli != nil {
 		return etcdCli
@@ -21,7 +22,7 @@ func GetEtcdCli() *clientv3.Client {
 
 	var err error
 	etcdCli, err = clientv3.New(clientv3.Config{
-		Endpoints:   []string{"http://10.10.0.2:2379"},
+		Endpoints:   []string{"10.20.0.1:2379"},
 		DialTimeout: 2 * time.Second,
 	})
 	if err != nil {
@@ -45,5 +46,5 @@ func GetConfig(key string) ([]byte, error) {
 }
 
 func getEtcdKey(key string) string {
-	return common.GetEnvType() + "-" + key
+	return tools.GetEnvType() + "-" + key
 }

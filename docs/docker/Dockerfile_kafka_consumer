@@ -1,0 +1,22 @@
+FROM golang:1.16 AS builder
+
+WORKDIR /build
+
+ENV module=kafka_consumer
+
+RUN git clone https://github.com/MasterKenway/Frog.git && \
+    cd Frog && \
+    go mod vendor &&  \
+    cd module/${module} && \
+    go build -o ${module} main.go
+
+FROM alpine:latest
+
+ENV module=kafka_consumer
+
+WORKDIR /service
+
+COPY --from=builder /build/Frog/module/${module}/${module} /service
+RUN chmod +x /service/${module}
+
+CMD ["sh", "-c" ,"./${module}"]

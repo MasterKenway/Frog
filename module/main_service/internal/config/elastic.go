@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"frog/module/common/config"
 	"frog/module/common/constant"
-
 	"github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 )

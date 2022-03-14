@@ -3,6 +3,7 @@ package middleware
 import (
 	"context"
 	"encoding/json"
+	"time"
 
 	"frog/module/common/constant"
 	"frog/module/main_service/internal/config"
@@ -48,6 +49,9 @@ func ValidateLogin(ctx *gin.Context) {
 		tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeLoginRequired, constant.MsgNotLogin)
 		return
 	}
+
+	// 登录态有效则每次请求延长登录有效时间
+	config.GetRedisCli().Expire(context.Background(), tools.GetRedisKeyLoginCert(cookie), 30*time.Minute)
 
 	ctx.Set(constant.CtxKeyUserInfo, userInfo)
 	ctx.Next()

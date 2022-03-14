@@ -1,8 +1,12 @@
 package login
 
 import (
+	"context"
 	"crypto/md5"
 	"encoding/hex"
+	"frog/module/main_service/internal/tools"
+	"github.com/google/uuid"
+	"time"
 
 	"frog/module/common/constant"
 	"frog/module/common/model/api_models"
@@ -53,5 +57,8 @@ func (r Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError)
 		}
 	}
 
-	return RedisUserInfo{Username: user.Username}, nil
+	cookieKey := uuid.New().String()
+	userInfo := RedisUserInfo{Username: user.Username, CookieKey: cookieKey}
+	config.GetRedisCli().Set(context.Background(), tools.GetRedisKeyLoginCert(cookieKey), userInfo, 30*time.Minute)
+	return userInfo, nil
 }

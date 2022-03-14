@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"frog/module/common/tools"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"sync"
 	"time"
 
-	"frog/module/common"
 	"frog/module/common/constant"
 	"frog/module/common/model/api_models"
 	"frog/module/common/model/es_model"
@@ -20,64 +20,70 @@ import (
 
 var (
 	consumeChan = make(chan struct{}, 10)
-	messages    = make([]*sarama.ConsumerMessage, 0)
+	messages    = make([][]byte, 0)
 	lock        = sync.Mutex{}
 )
 
-func init() {
-	ConsumeLog()
-	go consumeLoop()
-}
-
 func ConsumeLog() {
+	log.Info("creating consume group successfully")
 	kafkaConsumer := *config.GetKafkaConsumer()
 	claimConsumer := LogConsumer{}
-	err := kafkaConsumer.Consume(context.Background(), []string{config.GetKafkaTopic(constant.KafkaKeyLogTopic)}, &claimConsumer)
-	if err != nil {
-		log.Errorf("failed to consume kafka topic, %s", err.Error())
-		return
-	}
+	go func() {
+		for {
+			err := kafkaConsumer.Consume(context.Background(), []string{config.GetKafkaTopic(constant.KafkaKeyLogTopic)}, &claimConsumer)
+			if err != nil {
+				log.Errorf("failed to consume kafka topic, %s", err.Error())
+				continue
+			}
+		}
+
+	}()
+	log.Info("create consume group successfully")
 }
 
-func consumeLoop() {
-	ticker := time.NewTicker(10 * time.Second)
+func ConsumeLoop() {
+	ticker := time.NewTicker(5 * time.Second)
 	for {
 		select {
-		case <-common.Done:
+		case <-tools.Done:
 			ticker.Stop()
 			lock.Lock()
 			msgs := messages
-			messages = make([]*sarama.ConsumerMessage, 0)
+			messages = make([][]byte, 0)
 			lock.Unlock()
 			consume(msgs)
 			return
 		case <-ticker.C:
 			lock.Lock()
 			msgs := messages
-			messages = make([]*sarama.ConsumerMessage, 0)
+			messages = make([][]byte, 0)
 			lock.Unlock()
 			consume(msgs)
 		case <-consumeChan:
 			lock.Lock()
 			msgs := messages
-			messages = make([]*sarama.ConsumerMessage, 0)
+			messages = make([][]byte, 0)
 			lock.Unlock()
 			consume(msgs)
 		}
 	}
 }
 
-func consume(msgs []*sarama.ConsumerMessage) {
+func consume(msgs [][]byte) {
 	var (
 		ctx     = context.Background()
 		rawLogs = make([]api_models.RawLog, 0)
 	)
 
+	if len(msgs) == 0 {
+		return
+	}
+
 	for _, msg := range msgs {
 		var rawLog api_models.RawLog
-		err := json.Unmarshal(msg.Value, &rawLog)
+		err := json.Unmarshal(msg, &rawLog)
 		if err != nil {
-			log.Errorf("failed to unmarshal log message, %s, rawLog: %s", err.Error(), string(msg.Value))
+			log.Errorf("failed to unmarshal log message, %s, rawLog: %s", err.Error(), string(msg))
 			continue
 		}
 		rawLogs = append(rawLogs, rawLog)
@@ -141,17 +147,15 @@ func (l *LogConsumer) Cleanup(session sarama.ConsumerGroupSession) error {
 }
 
 func (l *LogConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	msgs := make([]*sarama.ConsumerMessage, 0)
 	for message := range claim.Messages() {
-		msgs = append(msgs, message)
+		lock.Lock()
+		messages = append(messages, message.Value)
+		if len(messages) > 100 {
+			consumeChan <- struct{}{}
+		}
+		lock.Unlock()
+		session.MarkMessage(message, "")
 	}
-
-	lock.Lock()
-	messages = append(messages, msgs...)
-	if len(messages) > 100 {
-		consumeChan <- struct{}{}
-	}
-	lock.Unlock()
 
 	return nil
 }

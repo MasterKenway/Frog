@@ -53,3 +53,7 @@ func GetRedisKeyIPStamps(ip string) string {
 func GetRedisKeyEmailCode(email string) string {
 	return constant.RedisKeyEmailCode + email
 }
+
+func GetRedisKeyLoginCert(uid string) string {
+	return constant.RedisKeyLoginCert + uid
+}

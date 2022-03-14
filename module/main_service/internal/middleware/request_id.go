@@ -3,22 +3,17 @@ package middleware
 import (
 	"bytes"
 	"io/ioutil"
-	"strings"
 
 	"frog/module/common/constant"
+	comTools "frog/module/common/tools"
 	"frog/module/main_service/internal/tools"
 
 	"github.com/buger/jsonparser"
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 )
 
 func RequestID(ctx *gin.Context) {
-	ctx.Set(constant.CtxKeyRequestID, uuid.New().String())
-
-	parts := strings.Split(ctx.Request.RemoteAddr, ":")
-	ctx.Set(constant.CtxKeyRemoteIP, parts[0])
-	ctx.Set(constant.CtxKeyRemotePort, parts[1])
+	ctx.Set(constant.CtxKeyRemoteIP, comTools.GetRemoteAddr(ctx))
 
 	reqBody, err := ioutil.ReadAll(ctx.Request.Body)
 	ctx.Request.Body.Close()
