@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/jasonlvhit/gocron"
 	"os"
 	"os/signal"
 	"syscall"
@@ -13,6 +14,11 @@ import (
 func main() {
 
 	log.Info("Start server...")
+
+	_ = tools.CronService.Every(1).Day().From(gocron.NextTick()).Do(service.DeleteLog)
+	go func() {
+		<-tools.CronService.Start()
+	}()
 
 	service.ConsumeLog()
 	go service.ConsumeLoop()

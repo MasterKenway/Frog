@@ -1,5 +1,7 @@
 package constant
 
+import "time"
+
 // Response Code Constant
 const (
 	CodeSuccess = "2000"
@@ -104,7 +106,6 @@ const (
 	CaptchaDomain = "captcha.tencentcloudapi.com"
 )
 
-//const (
-//	CaptchaAppID        = "2031922961"
-//	CaptchaAppSecretKey = "08Fa6z3Lod0sEOwPVSCo3zg**"
-//)
+const (
+	OneDay = 24 * time.Hour
+)
