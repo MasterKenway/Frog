@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"frog/module/common/model/db_models"
 	"frog/module/common/tools"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"sync"
@@ -90,6 +91,7 @@ func consume(msgs [][]byte) {
 	}
 
 	esLogs := make([]es_model.ESLog, 0)
+	dbLogs := make([]db_models.Log, 0)
 	for _, rawLog := range rawLogs {
 		esLogs = append(esLogs, es_model.ESLog{
 			Time:      rawLog.Time,
@@ -98,6 +100,19 @@ func consume(msgs [][]byte) {
 			RequestID: rawLog.RequestID,
 			Message:   rawLog.Message,
 		})
+
+		dbLogs = append(dbLogs, db_models.Log{
+			Time:      rawLog.Time,
+			Level:     rawLog.Level,
+			Caller:    rawLog.Caller,
+			RequestId: rawLog.RequestID,
+			Message:   rawLog.Message,
+		})
+	}
+
+	err := config.GetMysqlCli().Create(&dbLogs).Error
+	if err != nil {
+		log.Errorf("failed to save log to db, %s", err.Error())
 	}
 
 	indexer, err := config.GetESIndexer(es_model.ESLog{}.Index())

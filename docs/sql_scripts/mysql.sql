@@ -42,6 +42,7 @@ CREATE TABLE `t_user`
 CREATE TABLE `t_rental_info`
 (
     `id`              int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
+    `uid`             varchar(256)  NOT NULL COMMENT '发布消息用户',
     `title`           varchar(128)  NOT NULL COMMENT '标题',
     `cover`           varchar(1024) NOT NULL COMMENT '封面 (COS 链接)',
     `pics`            text          NOT NULL COMMENT '房子照片 (COS 链接)',
@@ -59,12 +60,17 @@ CREATE TABLE `t_rental_info`
     `furniture`       text          NOT NULL COMMENT ' 家具 (json 数组) ',
     `type`            int           NOT NULL COMMENT ' 0 - 整租 1 - 合租 ',
     `rooms`           text          NOT NULL COMMENT ' 如果为合租，出租的房间 ',
+    `subs_num`        int           NOT NULL DEFAULT 0 COMMENT '关注数',
     `insert_time`     timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
     `update_time`     timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_delete`       tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 - 未删除 1 - 删除',
     PRIMARY KEY `id` (`id`),
     KEY               `price` (`price`),
+    KEY               `uid` (`uid`),
     KEY               `area` (`area`),
+    KEY               `province` (`province`),
+    KEY               `city` (`city`),
+    KEY               `location` (`location`),
 ) ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT ' 租房信息表 ';
 
 
@@ -72,6 +78,7 @@ CREATE TABLE `t_comment`
 (
     `id`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
     `rental_id`   int unsigned NOT NULL COMMENT '住房信息 ID',
+    `publish_uid` int unsigned NOT NULL COMMENT '发布人 uid',
     `uid`         varchar(256)  NOT NULL COMMENT '用户 uid',
     `username`    varchar(128)  NOT NULL COMMENT '用户名称',
     `avatar`      varchar(1024) NOT NULL COMMENT '用户头像',
@@ -80,14 +87,16 @@ CREATE TABLE `t_comment`
     `update_time` timestamp     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_delete`   tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 - 未删除 1 - 删除',
     PRIMARY KEY `id` (`id`),
-    KEY           `rental_id_time` (`rental_id`, `insert_time`)
+    KEY           `rental_id_time` (`rental_id`, `insert_time`),
+    KEY           `publish_uid_time` (`publish_uid`, `insert_time`),
+    KEY           `uid_time` (`uid`, `insert_time`)
 )ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT '租房评论';
 
 CREATE TABLE `t_subscribe`
 (
     `id`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
     `uid`         varchar(256) NOT NULL COMMENT '用户 uid',
-    `type`        int          NOT NULL COMMENT '订阅类型',
+    `type`        int          NOT NULL COMMENT '订阅类型 0 - 租房， 1 - 标签，2 - 城市，3 - 位置',
     `rental_id`   int unsigned NULL COMMENT '住房信息 ID',
     `tag`         varchar(64) NULL COMMENT '订阅 Tag',
     `city`        varchar(64) NULL COMMENT '订阅城市',
@@ -98,12 +107,17 @@ CREATE TABLE `t_subscribe`
     `is_delete`   tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 - 未删除 1 - 删除',
     PRIMARY KEY `id` (`id`),
     KEY           `uid_time` (`uid`, `insert_time`),
+    KEY           `rental_id_time` (`rental_id`, `insert_time`),
+    KEY           `tag` (`tag`),
+    KEY           `city` (`city`),
+    KEY           `location` (`location`)
 )ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT '用户订阅租房信息';
 
 CREATE TABLE `t_notification`
 (
     `id`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
     `type`        int          NOT NULL COMMENT '通知类型',
+    `uid`         int          NOT NULL COMMENT '通知用户',
     `comment_id`  int unsigned NULL `评论`,
     `rental_id`   int unsigned NULL `租房信息 ID`,
     `content`     varchar(128) NOT NULL COMMENT '通知内容',
@@ -112,20 +126,21 @@ CREATE TABLE `t_notification`
     `update_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_delete`   tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 - 未删除 1 - 删除',
     PRIMARY KEY `id` (`id`),
-    KEY           `id` (`id`, `insert_time`),
+    KEY           `uid_time` (`uid`, `insert_time`)
 )ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT '用户通知表';
 
 CREATE TABLE `l_log`
 (
     `id`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
-    `time`        timestamp    NOT NULL COMMENT '',
-    `level`       varchar(16)  NOT NULL COMMENT '',
-    `caller`      varchar(256) NOT NULL COMMENT '',
-    `request_id`  varchar(256) NOT NULL COMMENT '',
-    `message`     text         NOT NULL COMMENT '',
+    `time`        timestamp    NOT NULL COMMENT 'log 记录时间',
+    `level`       varchar(16)  NOT NULL COMMENT 'log 等级',
+    `caller`      varchar(256) NOT NULL COMMENT '调用函数',
+    `request_id`  varchar(256) NOT NULL COMMENT '请求 ID',
+    `message`     text         NOT NULL COMMENT '消息',
     `insert_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
     `update_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     `is_delete`   tinyint(1) NOT NULL DEFAULT 0 COMMENT '是否删除 0 - 未删除 1 - 删除',
     PRIMARY KEY `id` (`id`),
-    KEY           `request_id` (`request_id`)
+    KEY           `request_id` (`request_id`),
+    KEY           `insert_time` (`insert_time`)
 )ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT '日志表';
