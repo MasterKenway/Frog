@@ -1,2 +1,4 @@
+/docs/config_json
 /vendor/
 .idea
+*main.log

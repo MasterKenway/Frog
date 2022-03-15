@@ -78,6 +78,8 @@ services:
       MYSQL_ROOT_PASSWORD: "example"
     ports:
       - "3306:3306"
+    volumes:
+      - ./mysql_data:/var/lib/mysql
     networks:
       default:
         ipv4_address: 10.10.0.6
