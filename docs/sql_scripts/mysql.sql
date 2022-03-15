@@ -1,5 +1,7 @@
-CREATE USER 'insert_only'@'%' IDENTIFIED BY 'example';
-CREATE USER 'read_only'@'%' IDENTIFIED BY 'example';
+CREATE
+USER 'insert_only'@'%' IDENTIFIED BY 'example';
+CREATE
+USER 'read_only'@'%' IDENTIFIED BY 'example';
 -- UA 黑名单配置
 CREATE TABLE `t_ua_config`
 (
@@ -54,7 +56,7 @@ CREATE TABLE `t_rental_info`
     `rent_term`       varchar(64)   NOT NULL COMMENT '租房周期',
     `province`        varchar(256)  NOT NULL COMMENT '省份',
     `city`            varchar(256)  NOT NULL COMMENT '城市',
-    `location`        varchar(256) COMMENT ' 位置 ',
+    `location`        varchar(256)  NOT NULL COMMENT ' 位置 ',
     `desc`            text          NOT NULL COMMENT ' 描述 ',
     `tags`            text          NOT NULL COMMENT ' 标签 (json 数组) ',
     `house_type`      varchar(256)  NOT NULL COMMENT ' 户型 ',
@@ -72,7 +74,7 @@ CREATE TABLE `t_rental_info`
     KEY               `area` (`area`),
     KEY               `province` (`province`),
     KEY               `city` (`city`),
-    KEY               `location` (`location`),
+    KEY               `location` (`location`)
 ) ENGINE = Innodb AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COMMENT ' 租房信息表 ';
 
 
