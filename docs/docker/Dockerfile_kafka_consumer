@@ -1,8 +1,11 @@
-FROM golang:1.16 AS builder
+FROM golang:1.16.15-alpine3.14 AS builder
 
 WORKDIR /build
 
 ENV module=kafka_consumer
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apk/repositories && \
+    apk --update add --no-cache git
 
 RUN git clone https://github.com/MasterKenway/Frog.git && \
     cd Frog && \
@@ -16,7 +19,8 @@ ENV module=kafka_consumer
 
 WORKDIR /service
 
-COPY --from=builder /build/Frog/module/${module}/${module} /service
+COPY --from=builder /build/Frog/module/${module}/${module} .
+
 RUN chmod +x /service/${module}
 
-CMD ["sh", "-c" ,"./${module}"]
+CMD ["sh","-c","/service/${module}"]
