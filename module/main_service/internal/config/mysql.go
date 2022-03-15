@@ -3,9 +3,11 @@ package config
 import (
 	"encoding/json"
 	"fmt"
-	"frog/module/common/constant"
 
 	"frog/module/common/config"
+	"frog/module/common/constant"
+
+	perrors "github.com/pkg/errors"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -24,10 +26,15 @@ func GetReadOnlyMysqlCli() *gorm.DB {
 		panic(err)
 	}
 
-	var mysqlConf config.MysqlConfig
-	err = json.Unmarshal(mysqlEtcdConfigBytes, &mysqlConf)
+	var mysqlConfMap config.MysqlConfig
+	err = json.Unmarshal(mysqlEtcdConfigBytes, &mysqlConfMap)
 	if err != nil {
 		panic(err)
+	}
+
+	mysqlConf, ok := mysqlConfMap.ConfigMaps[constant.MysqlUserReadOnly]
+	if !ok {
+		panic(perrors.New("mysql config key not exists"))
 	}
 
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/dbname?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port)), &gorm.Config{})
@@ -48,10 +55,15 @@ func GetMysqlCli() *gorm.DB {
 		panic(err)
 	}
 
-	var mysqlConf config.MysqlConfig
-	err = json.Unmarshal(mysqlEtcdConfigBytes, &mysqlConf)
+	var mysqlConfMap config.MysqlConfig
+	err = json.Unmarshal(mysqlEtcdConfigBytes, &mysqlConfMap)
 	if err != nil {
 		panic(err)
+	}
+
+	mysqlConf, ok := mysqlConfMap.ConfigMaps[constant.MysqlUserAll]
+	if !ok {
+		panic(perrors.New("mysql config key not exists"))
 	}
 
 	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/dbname?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port)), &gorm.Config{})

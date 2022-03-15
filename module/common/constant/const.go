@@ -88,6 +88,13 @@ const (
 	KafkaKeyLogTopic = "es-log"
 )
 
+// Mysql Config Map Keys
+const (
+	MysqlUserInsertOnly = "insert_only"
+	MysqlUserReadOnly   = "read_only"
+	MysqlUserAll        = "all"
+)
+
 // URL constant
 const (
 	CaptchaDomain = "captcha.tencentcloudapi.com"

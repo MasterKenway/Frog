@@ -1,3 +1,5 @@
+CREATE USER 'insert_only'@'%' IDENTIFIED BY 'example';
+CREATE USER 'read_only'@'%' IDENTIFIED BY 'example';
 -- UA 黑名单配置
 CREATE TABLE `t_ua_config`
 (
@@ -118,8 +120,8 @@ CREATE TABLE `t_notification`
     `id`          int unsigned NOT NULL AUTO_INCREMENT COMMENT '主键 ID',
     `type`        int          NOT NULL COMMENT '通知类型',
     `uid`         int          NOT NULL COMMENT '通知用户',
-    `comment_id`  int unsigned NULL `评论`,
-    `rental_id`   int unsigned NULL `租房信息 ID`,
+    `comment_id`  int unsigned NULL COMMENT '评论',
+    `rental_id`   int unsigned NULL COMMENT '租房信息 ID',
     `content`     varchar(128) NOT NULL COMMENT '通知内容',
     `is_read`     tinyint(1) NOT NULL DEFAULT 0 COMMENT '已读',
     `insert_time` timestamp    NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '插入时间',
