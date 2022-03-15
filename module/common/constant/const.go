@@ -14,6 +14,7 @@ const (
 	CodeCaptchaNeeded    = "4006"
 	CodeCaptchaInvalid   = "4007"
 	CodeUserExists       = "4008"
+	CodeRateLimit        = "4009"
 
 	CodeInternalError = "5000"
 )
@@ -32,6 +33,7 @@ const (
 	MsgCaptchaInvalid    = "Captcha is Invalid"
 	MsgEmailCodeInvalid  = "Email Code is Invalid"
 	MsgUserExists        = "Username Exists"
+	MsgRateLimit         = "request to frequently"
 
 	MsgInternalError = "Internal Error"
 )
@@ -62,6 +64,7 @@ const (
 	RedisKeyIPStamp   = "spider-ips-"
 	RedisKeyEmailCode = "email-code-"
 	RedisKeyLoginCert = "login-status-"
+	RedisKeyRateLimit = "rate-limit-"
 )
 
 // IP Stamp Constants
@@ -75,12 +78,13 @@ const (
 // ETCD Key
 const (
 	// ETCD Config
-	EtcdKeyMysqlConfig   = "mysql-config"
-	EtcdKeyRedisConfig   = "redis-config"
-	EtcdKeyKafkaConfig   = "kafka-config"
-	EtcdKeyESConfig      = "elastic-config"
-	EtcdKeyCaptchaConfig = "captcha-config"
-	EtcdKeyEmailConfig   = "email-config"
+	EtcdKeyMysqlConfig     = "mysql-config"
+	EtcdKeyRedisConfig     = "redis-config"
+	EtcdKeyKafkaConfig     = "kafka-config"
+	EtcdKeyESConfig        = "elastic-config"
+	EtcdKeyCaptchaConfig   = "captcha-config"
+	EtcdKeyEmailConfig     = "email-config"
+	EtcdKeyRateLimitConfig = "rate-limit-config"
 )
 
 // Kafka Key

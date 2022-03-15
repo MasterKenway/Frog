@@ -23,12 +23,14 @@ func main() {
 	}()
 
 	r := gin.New()
+
 	r.Use(
 		middleware.Logger,
 		middleware.RequestID,
 		middleware.AntiRepeat,
 		middleware.AntiBlackIPs,
 		middleware.AntiUA,
+		middleware.RateLimit,
 		middleware.Captcha,
 		middleware.ValidateLogin,
 	)

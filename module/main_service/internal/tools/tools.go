@@ -57,3 +57,7 @@ func GetRedisKeyEmailCode(email string) string {
 func GetRedisKeyLoginCert(uid string) string {
 	return constant.RedisKeyLoginCert + uid
 }
+
+func GetRedisKeyRateLimit(ip string) string {
+	return constant.RedisKeyRateLimit + ip
+}

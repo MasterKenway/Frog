@@ -3,6 +3,7 @@ package log
 import (
 	"bytes"
 	"context"
+	"frog/module/common/tools"
 	"testing"
 	"time"
 
@@ -57,7 +58,7 @@ func TestESLogger(t *testing.T) {
 		}
 
 		var hits []es_model.ESLog
-		err := es_model.GetModelFromESResp(resp, &hits)
+		err := tools.GetModelFromESResp(resp, &hits)
 		if err != nil {
 			t.Fatalf("failed to get hits from resp, %s", err.Error())
 		}
