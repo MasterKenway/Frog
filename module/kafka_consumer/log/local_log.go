@@ -16,10 +16,6 @@ var (
 )
 
 func init() {
-	//zap.RegisterSink("winfile", func(u *url.URL) (zap.Sink, error) {
-	//	return os.OpenFile(u.Path[1:], os.O_WRONLY|os.O_APPEND|os.O_CREATE, 0644)
-	//})
-
 	cfg := zap.NewDevelopmentConfig()
 	cfg.DisableStacktrace = true
 	cfg.Encoding = "json"

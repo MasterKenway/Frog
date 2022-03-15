@@ -12,6 +12,11 @@ var (
 	ErrESRecordNotFound = perrors.New("hits is empty")
 )
 
+type ESModel interface {
+	Index() string
+	Mapping() string
+}
+
 type ESResponse struct {
 	Took    int
 	Timeout bool

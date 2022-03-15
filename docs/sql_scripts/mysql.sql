@@ -1,7 +1,12 @@
 CREATE
 USER 'insert_only'@'%' IDENTIFIED BY 'example';
+
 CREATE
 USER 'read_only'@'%' IDENTIFIED BY 'example';
+
+GRANT INSERT ON frog_test.t_comment TO 'insert_only'@'%';
+GRANT SELECT ON frog_test.* TO 'read_only'@'%';
+
 -- UA 黑名单配置
 CREATE TABLE `t_ua_config`
 (
