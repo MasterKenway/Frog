@@ -20,7 +20,7 @@ func GetEmailCodeAdapter() api_models.ApiInterface {
 }
 
 type Request struct {
-	Mail string `json:"mail" validate:"required"`
+	Mail string `json:"mail" validate:"required,email"`
 }
 
 func (r *Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError) {

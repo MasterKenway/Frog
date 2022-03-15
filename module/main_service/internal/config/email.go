@@ -21,11 +21,12 @@ func GetEmailConfig() *config.EmailConfig {
 		panic(err)
 	}
 
-	var mysqlConf *config.EmailConfig
-	err = json.Unmarshal(configBytes, mysqlConf)
+	conf := &config.EmailConfig{}
+	err = json.Unmarshal(configBytes, &conf)
 	if err != nil {
 		panic(err)
 	}
+	emailConf = conf
 
 	return emailConf
 }

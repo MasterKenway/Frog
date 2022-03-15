@@ -1,6 +1,7 @@
 package tools
 
 import (
+	"fmt"
 	"net/smtp"
 	"time"
 
@@ -15,8 +16,13 @@ var (
 )
 
 func init() {
+	var err error
+	fmt.Printf("%+v\n", *config.GetEmailConfig())
 	auth = smtp.PlainAuth("", config.GetEmailConfig().Username, config.GetEmailConfig().Password, config.GetEmailConfig().EmailHost)
-	pool, _ = email.NewPool(config.GetEmailConfig().EmailHost+":25", 1, auth)
+	pool, err = email.NewPool(config.GetEmailConfig().EmailHost+":25", 1, auth)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func SendEmail(to string, content string) error {
