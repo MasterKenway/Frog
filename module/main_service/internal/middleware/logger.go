@@ -20,7 +20,7 @@ func Logger(ctx *gin.Context) {
 	query := ctx.Request.URL.RawQuery
 	ctx.Next()
 	cost := time.Since(start)
-	log.Infof("status: %d; method: %s; path %s; query: %s; ip: %s; user-agent: %s; errors: %s; cost: %d",
-		reqId, ctx.Writer.Status(), ctx.Request.Method, path, query, tools.GetRemoteAddr(ctx),
+	log.Infof(reqId, "status: %d; method: %s; path %s; query: %s; ip: %s; user-agent: %s; errors: %s; cost: %d",
+		ctx.Writer.Status(), ctx.Request.Method, path, query, tools.GetRemoteAddr(ctx),
 		ctx.Request.UserAgent(), ctx.Errors.ByType(gin.ErrorTypePrivate).String(), cost)
 }

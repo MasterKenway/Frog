@@ -1,18 +1,22 @@
 package tools
 
 import (
-	"frog/module/common/constant"
-	"frog/module/common/model/api_models"
-	"github.com/gin-gonic/gin"
 	"math/rand"
 	"net/http"
+	"strings"
 	"time"
+
+	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
+
+	"github.com/gin-gonic/gin"
 )
 
 func CtxAbortWithCodeAndMsg(ctx *gin.Context, code string, msg string) {
 	ctx.AbortWithStatusJSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
-		Code:    code,
-		Message: msg,
+		Code:      code,
+		Message:   msg,
+		RequestID: ctx.GetString(constant.CtxKeyRequestID),
 	}})
 	return
 }
@@ -60,4 +64,8 @@ func GetRedisKeyLoginCert(uid string) string {
 
 func GetRedisKeyRateLimit(ip string) string {
 	return constant.RedisKeyRateLimit + ip
+}
+
+func GetRedisKeyApiCache(interf string, a ...string) string {
+	return constant.RedisKeyApiCache + strings.Join(append([]string{interf}, a...), ":")
 }

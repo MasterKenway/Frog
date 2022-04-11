@@ -2,6 +2,7 @@ package log
 
 import (
 	"fmt"
+
 	"frog/module/common/constant"
 	"frog/module/main_service/internal/config"
 
@@ -26,7 +27,6 @@ func (k KafkaWriter) Write(p []byte) (n int, err error) {
 
 func (k *KafkaWriter) HandleErrors() {
 	for {
-
 		select {
 		case err := <-k.Producer.Errors():
 			fmt.Printf("k.Producer.Errors() %s\n", err.Error())
@@ -63,7 +63,6 @@ func init() {
 
 func Info(reqId string, a ...interface{}) {
 	logger.log.With("RID", reqId).Info(a...)
-
 }
 
 func Infof(reqId string, format string, a ...interface{}) {
@@ -80,7 +79,6 @@ func Debugf(reqId, format string, a ...interface{}) {
 
 func Error(reqId string, a ...interface{}) {
 	logger.log.With("RID", reqId).Error(a...)
-
 }
 
 func Errorf(reqId, format string, a ...interface{}) {
@@ -93,4 +91,12 @@ func Warn(reqId string, a ...interface{}) {
 
 func Warnf(reqId, format string, a ...interface{}) {
 	logger.log.With("RID", reqId).Warnf(format, a...)
+}
+
+func Fatal(reqId string, a ...interface{}) {
+	logger.log.With("RID", reqId).Fatal(a...)
+}
+
+func Fatalf(reqId, format string, a ...interface{}) {
+	logger.log.With("RID", reqId).Fatalf(format, a...)
 }

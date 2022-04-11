@@ -67,6 +67,7 @@ const (
 	RedisKeyEmailCode = "email-code-"
 	RedisKeyLoginCert = "login-status-"
 	RedisKeyRateLimit = "rate-limit-"
+	RedisKeyApiCache  = "api-cache-"
 )
 
 // IP Stamp Constants
@@ -108,4 +109,10 @@ const (
 
 const (
 	OneDay = 24 * time.Hour
+)
+
+const (
+	FilterTypeEQ = "eq"
+	FilterTypeGT = "gt"
+	FilterTypeLT = "lt"
 )

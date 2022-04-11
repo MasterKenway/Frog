@@ -18,13 +18,19 @@ type Request struct {
 	Data json.RawMessage `json:"Data"`
 }
 
+type Filter struct {
+	Type  string      `json:"Type,omitempty" validate:"oneof=eq gt lt"`
+	Key   string      `json:"Key,omitempty"`
+	Value interface{} `json:"Value,omitempty"`
+}
+
 type APIResponse struct {
 	ResponseInfo `json:"Response"`
 }
 
 type APIError struct {
-	Code    string
-	Message string
+	Code    string `json:"Code,omitempty"`
+	Message string `json:"Message,omitempty"`
 }
 
 type ResponseInfo struct {
@@ -40,6 +46,11 @@ type CaptchaResponse struct {
 	CaptchaResponseInfo CaptchaResponseInfo `json:"Response"`
 	RetCode             int64               `json:"retcode"`
 	RetMsg              string              `json:"retmsg"`
+}
+
+type CaptchaRequest struct {
+	RandStr string `json:"RandStr,omitempty"`
+	Ticket  string `json:"Ticket,omitempty"`
 }
 
 type CaptchaResponseInfo struct {
