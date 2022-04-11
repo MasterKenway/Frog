@@ -3,11 +3,11 @@ package config
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"reflect"
 	"time"
 
 	"frog/module/common/tools"
-	"frog/module/main_service/internal/log"
 
 	perrors "github.com/pkg/errors"
 	"go.etcd.io/etcd/client/v3"
@@ -50,7 +50,7 @@ func GetConfig(key string) ([]byte, error) {
 
 func WatchConfig(key string, object interface{}) {
 	if reflect.TypeOf(object).Kind() != reflect.Ptr {
-		log.Errorf("etcd-watcher", "input param invalid")
+		fmt.Println("input param invalid")
 		return
 	}
 
@@ -62,7 +62,7 @@ func WatchConfig(key string, object interface{}) {
 				return
 			case resp := <-watchChan:
 				if resp.Err() != nil {
-					log.Errorf("etcd-watcher", "failed to watch key [%s], %s", getEtcdKey(key), resp.Err().Error())
+					fmt.Printf("failed to watch key [%s], %s\n", getEtcdKey(key), resp.Err().Error())
 					continue
 				}
 
@@ -70,7 +70,7 @@ func WatchConfig(key string, object interface{}) {
 					if event.Type == clientv3.EventTypePut {
 						err := json.Unmarshal(event.Kv.Value, object)
 						if err != nil {
-							log.Errorf("etcd-watcher", "failed to unmarshal object [%s], %s", getEtcdKey(key), err.Error())
+							fmt.Printf("failed to unmarshal object [%s], %s\n", getEtcdKey(key), err.Error())
 						}
 					}
 				}

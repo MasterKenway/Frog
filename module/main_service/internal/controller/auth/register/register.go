@@ -23,10 +23,10 @@ func GetRegisterAdapter() api_models.ApiInterface {
 }
 
 type Request struct {
-	Username  string
-	Password  string
-	Email     string `json:"email,omitempty" validate:"required"`
-	EmailCode string `json:"email_code,omitempty" validate:"required"`
+	Username  string `json:"Username" validate:"required"`
+	Password  string `json:"Password" validate:"required"`
+	Email     string `json:"Email,omitempty" validate:"required"`
+	EmailCode string `json:"EmailCode,omitempty" validate:"required"`
 }
 
 func (r *Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError) {

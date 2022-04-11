@@ -2,10 +2,11 @@ package config
 
 import (
 	"encoding/json"
-	"frog/module/common/config"
-	"frog/module/common/constant"
 	log2 "log"
 	"os"
+
+	"frog/module/common/config"
+	"frog/module/common/constant"
 
 	"github.com/Shopify/sarama"
 )

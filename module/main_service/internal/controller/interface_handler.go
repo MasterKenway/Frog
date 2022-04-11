@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"frog/module/common/constant"
 	"frog/module/common/model/api_models"
+	"frog/module/main_service/internal/log"
 	"net/http"
 
 	"frog/module/main_service/internal/tools"
@@ -42,29 +43,38 @@ func InterfaceHandler(ctx *gin.Context) {
 
 	err = Validate(controller)
 	if err != nil {
-		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
+		msg, _ := json.Marshal(api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
 			RequestID: reqId,
 			Code:      constant.CodeBadRequest,
 			Message:   err.Error(),
 		}})
+		log.Infof(reqId, string(msg))
+		ctx.Writer.WriteHeader(http.StatusOK)
+		ctx.Writer.Write(msg)
 		return
 	}
 
 	result, apiErr := controller.GetResult(ctx)
 	if apiErr != nil {
-		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
+		msg, _ := json.Marshal(api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
 			RequestID: reqId,
 			Code:      apiErr.Code,
 			Message:   apiErr.Message,
 			Error:     result,
 		}})
+		log.Infof(reqId, string(msg))
+		ctx.Writer.WriteHeader(http.StatusOK)
+		ctx.Writer.Write(msg)
 	} else {
-		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
+		msg, _ := json.Marshal(api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
 			RequestID: reqId,
 			Code:      constant.CodeSuccess,
 			Message:   constant.MsgSuccess,
 			Data:      result,
 		}})
+		log.Infof(reqId, string(msg))
+		ctx.Writer.WriteHeader(http.StatusOK)
+		ctx.Writer.Write(msg)
 	}
 }
 
