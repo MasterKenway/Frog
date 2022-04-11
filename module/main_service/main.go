@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"log"
+	"fmt"
 	"net/http"
 	"os"
 	"os/signal"
@@ -10,8 +10,10 @@ import (
 	"time"
 
 	"frog/module/common/constant"
+	"frog/module/common/model/api_models"
 	"frog/module/common/tools"
 	"frog/module/main_service/internal/controller"
+	"frog/module/main_service/internal/log"
 	"frog/module/main_service/internal/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -25,6 +27,7 @@ func main() {
 	r := gin.New()
 
 	r.Use(
+		gin.CustomRecovery(CustomRecovery()),
 		middleware.Logger,
 		middleware.RequestID,
 		middleware.AntiRepeat,
@@ -38,7 +41,7 @@ func main() {
 	r.POST(constant.InterfaceEntry, controller.InterfaceHandler)
 
 	srv := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8081",
 		Handler: r,
 	}
 
@@ -46,7 +49,7 @@ func main() {
 	// it won't block the graceful shutdown handling below
 	go func() {
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("listen: %s\n", err)
+			log.Fatalf("listen: %s\n", err.Error())
 		}
 	}()
 
@@ -58,7 +61,7 @@ func main() {
 	// kill -9 is syscall.SIGKILL but can't be catch, so don't need add it
 	signal.Notify(quit, syscall.SIGINT, syscall.SIGTERM)
 	<-quit
-	log.Println("Shutting down server...")
+	fmt.Println("Shutting down server...")
 	close(tools.Done)
 	// The context is used to inform the server it has 5 seconds to finish
 	// the request it is currently handling
@@ -68,6 +71,17 @@ func main() {
 		log.Fatal("Server forced to shutdown: ", err)
 	}
 
-	log.Println("Server exiting")
+	fmt.Println("Server exiting")
+}
 
+func CustomRecovery() gin.RecoveryFunc {
+	return func(ctx *gin.Context, err interface{}) {
+		reqId := ctx.GetString(constant.CtxKeyRequestID)
+		log.Fatalf(reqId, "%+v", err)
+		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
+			Code:      constant.CodeInternalError,
+			Error:     err,
+			RequestID: reqId,
+		}})
+	}
 }
