@@ -2,7 +2,7 @@ package config
 
 import (
 	"encoding/json"
-	"frog/module/kafka_consumer/log"
+	"frog/module/kafka_consumer/internel/log"
 	log2 "log"
 	"os"
 

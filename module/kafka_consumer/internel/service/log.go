@@ -6,6 +6,8 @@ import (
 	"encoding/json"
 	"frog/module/common/model/db_models"
 	"frog/module/common/tools"
+	config2 "frog/module/kafka_consumer/internel/config"
+	"frog/module/kafka_consumer/internel/log"
 	"github.com/elastic/go-elasticsearch/v8/esutil"
 	"sync"
 	"time"
@@ -13,9 +15,6 @@ import (
 	"frog/module/common/constant"
 	"frog/module/common/model/api_models"
 	"frog/module/common/model/es_model"
-	"frog/module/kafka_consumer/config"
-	"frog/module/kafka_consumer/log"
-
 	"github.com/Shopify/sarama"
 )
 
@@ -27,11 +26,11 @@ var (
 
 func ConsumeLog() {
 	log.Info("creating consume group successfully")
-	kafkaConsumer := *config.GetKafkaConsumer()
+	kafkaConsumer := *config2.GetKafkaConsumer()
 	claimConsumer := LogConsumer{}
 	go func() {
 		for {
-			err := kafkaConsumer.Consume(context.Background(), []string{config.GetKafkaTopic(constant.KafkaKeyLogTopic)}, &claimConsumer)
+			err := kafkaConsumer.Consume(context.Background(), []string{config2.GetKafkaTopic(constant.KafkaKeyLogTopic)}, &claimConsumer)
 			if err != nil {
 				log.Errorf("failed to consume kafka topic, %s", err.Error())
 				continue
@@ -110,12 +109,12 @@ func consume(msgs [][]byte) {
 		})
 	}
 
-	err := config.GetMysqlCli().Create(&dbLogs).Error
+	err := config2.GetMysqlCli().Create(&dbLogs).Error
 	if err != nil {
 		log.Errorf("failed to save log to db, %s", err.Error())
 	}
 
-	indexer, err := config.GetESIndexer(es_model.ESLog{}.Index())
+	indexer, err := config2.GetESIndexer(es_model.ESLog{}.Index())
 	if err != nil {
 		log.Errorf("failed to get es indexer, %s", err.Error())
 	}

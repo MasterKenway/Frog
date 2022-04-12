@@ -1,12 +1,12 @@
 package service
 
 import (
+	"frog/module/kafka_consumer/internel/config"
+	"frog/module/kafka_consumer/internel/log"
 	"time"
 
 	"frog/module/common/constant"
 	"frog/module/common/model/db_models"
-	"frog/module/kafka_consumer/config"
-	"frog/module/kafka_consumer/log"
 )
 
 func DeleteLog() {
