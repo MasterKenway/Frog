@@ -1,30 +1,46 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # -*- coding: UTF-8 -*-
-import copy
 import io
 
 from fontTools import subset
 from fontTools.ttLib import TTFont
+import xml.etree.ElementTree as ET
 
 
-def process():
-    font = TTFont('./SourceHanSansCN-Regular.otf')
+class ObfsFont:
+    def __init__(self):
+        self.origin_font_file = './SourceHanSansCN-Regular.otf'
+        self.font_file = 'font.woff2'
 
-    file = io.open("./high_usage_chinese", mode='r', encoding='UTF-8')
-    highUsageChinese = file.read()
+    def process(self):
+        temp_xml_path = './temp.xml'
 
-    subSetter = subset.Subsetter()
-    subSetter.populate(text=highUsageChinese)
-    subSetter.subset(font)
+        file = io.open("./high_usage_chinese", mode='r', encoding='UTF-8')
+        high_usage_chinese = file.read()
 
-    cmap = font.getBestCmap()
+        font = TTFont(self.origin_font_file)
 
-    tempMap = copy.deepcopy(cmap)
-    for k, v in tempMap.items():
-        cmap[k + 10] = cmap.pop(k)
+        sub_setter = subset.Subsetter()
+        sub_setter.populate(text=high_usage_chinese)
+        sub_setter.subset(font)
 
-    font.save('./font.woff2')
+        font.saveXML(temp_xml_path)
+        tree = ET.parse(temp_xml_path)
+        for pcamp in tree.getroot().iter('cmap'):
+            for scmap in pcamp.iter('cmap_format_4'):
+                for item in scmap.iter('map'):
+                    code = item.get('code')
+                    item.set('code', hex(int(code, 16) + 10))
+
+        tree.write(temp_xml_path)
+
+        font = TTFont()
+        font.importXML(fileOrPath='./temp2.xml')
+        font.save(self.font_file)
+
+        os.remove(temp_xml_path)
 
 
 if __name__ == '__main__':
-    process()
+    font_processor = ObfsFont()
+    font_processor.process()
