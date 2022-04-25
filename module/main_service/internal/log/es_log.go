@@ -1,8 +1,6 @@
 package log
 
 import (
-	"fmt"
-
 	"frog/module/common/constant"
 	"frog/module/main_service/internal/config"
 
@@ -16,22 +14,15 @@ var (
 )
 
 type KafkaWriter struct {
-	Producer sarama.AsyncProducer
+	//Producer sarama.AsyncProducer
+	Producer sarama.SyncProducer
 	Topic    string
 }
 
 func (k KafkaWriter) Write(p []byte) (n int, err error) {
-	k.Producer.Input() <- &sarama.ProducerMessage{Topic: k.Topic, Key: nil, Value: sarama.ByteEncoder(p), Partition: 0}
-	return len(p), nil
-}
-
-func (k *KafkaWriter) HandleErrors() {
-	for {
-		select {
-		case err := <-k.Producer.Errors():
-			fmt.Printf("k.Producer.Errors() %s\n", err.Error())
-		}
-	}
+	err = k.Producer.SendMessages([]*sarama.ProducerMessage{{Topic: k.Topic, Key: nil, Value: sarama.ByteEncoder(p), Partition: 0}})
+	//k.Producer.Input() <- &sarama.ProducerMessage{Topic: k.Topic, Key: nil, Value: sarama.ByteEncoder(p), Partition: 0}
+	return len(p), err
 }
 
 type customLogger struct {
@@ -48,10 +39,10 @@ func init() {
 	})
 
 	kw := KafkaWriter{
-		Producer: config.GetKafkaProducer(),
+		//Producer: config.GetKafkaAsyncProducer(),
+		Producer: config.GetKafkaSyncProducer(),
 		Topic:    config.GetKafkaTopic(constant.KafkaKeyLogTopic),
 	}
-	go kw.HandleErrors()
 	topicError := zapcore.AddSync(kw)
 	encodeConfig := zap.NewDevelopmentEncoderConfig()
 	encodeConfig.EncodeTime = zapcore.RFC3339TimeEncoder
