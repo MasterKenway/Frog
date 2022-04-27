@@ -37,7 +37,7 @@ func GetReadOnlyMysqlCli() *gorm.DB {
 		panic(perrors.New("mysql config key not exists"))
 	}
 
-	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/dbname?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port)), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port, mysqlConf.DBName)), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}
@@ -66,7 +66,7 @@ func GetMysqlCli() *gorm.DB {
 		panic(perrors.New("mysql config key not exists"))
 	}
 
-	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/dbname?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port)), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", mysqlConf.User, mysqlConf.Password, mysqlConf.Endpoint, mysqlConf.Port, mysqlConf.DBName)), &gorm.Config{})
 	if err != nil {
 		panic(err)
 	}

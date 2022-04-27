@@ -24,8 +24,8 @@ func GetEtcdCli() *clientv3.Client {
 	go func() {
 		var err error
 		etcdCli, err = clientv3.New(clientv3.Config{
-			Endpoints: []string{"10.10.0.4:2379"},
-			//Endpoints:   []string{"10.20.0.1:2379"},
+			//Endpoints: []string{"10.10.0.4:2379"},
+			Endpoints:   []string{"10.20.0.1:2379"},
 			DialTimeout: 2 * time.Second,
 		})
 		if err != nil {

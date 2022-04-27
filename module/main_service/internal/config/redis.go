@@ -24,7 +24,7 @@ func GetRedisCli() *redis.Client {
 		panic(err)
 	}
 
-	var conf *config.RedisConfig
+	conf := &config.RedisConfig{}
 	err = json.Unmarshal(bytes, conf)
 	if err != nil {
 		panic(err)

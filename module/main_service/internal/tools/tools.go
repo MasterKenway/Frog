@@ -54,6 +54,10 @@ func GetRedisKeyIPStamps(ip string) string {
 	return constant.RedisKeyIPStamp + ip
 }
 
+func GetRedisKeyNonce(nonce string) string {
+	return constant.RedisKeyNonce + nonce
+}
+
 func GetRedisKeyEmailCode(email string) string {
 	return constant.RedisKeyEmailCode + email
 }
@@ -64,6 +68,10 @@ func GetRedisKeyLoginCert(uid string) string {
 
 func GetRedisKeyRateLimit(ip string) string {
 	return constant.RedisKeyRateLimit + ip
+}
+
+func GetRedisKeyFingerPrint(fp string) string {
+	return constant.RedisKeyBlockFP + fp
 }
 
 func GetRedisKeyApiCache(interf string, a ...string) string {
