@@ -1,7 +1,9 @@
 package middleware
 
 import (
+	"context"
 	"regexp"
+	"time"
 
 	"frog/module/common/constant"
 	"frog/module/common/model/db_models"
@@ -15,7 +17,7 @@ import (
 )
 
 const (
-	uaDefaultConfig = ""
+	uaDefaultConfig = "PostmanRuntime|headless"
 )
 
 var (
@@ -35,20 +37,33 @@ func init() {
 	}
 }
 
-func AntiUA(ctx *gin.Context) {
-	ua := ctx.GetHeader("user-agent")
-	if _, ok := uaCache[ua]; ok {
-		tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeForbidden, constant.MsgIllegalRequest)
-		return
-	}
+func AntiUA() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		reqId := ctx.GetString(constant.CtxKeyRequestID)
+		ua := ctx.GetHeader("user-agent")
 
-	if uaReg.Match([]byte(ua)) {
-		uaCache[ua] = true
-		tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeForbidden, constant.MsgIllegalRequest)
-		return
-	}
+		if ua == "" {
+			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeForbidden, "UA Invalid")
+			return
+		}
 
-	ctx.Next()
+		if _, ok := uaCache[ua]; ok {
+			log.Warnf(reqId, "Hit UA black list")
+			config.GetRedisCli().Set(context.Background(), tools.GetRedisKeyFingerPrint(ctx.GetString(constant.RedisKeyBlockFP)), 1, 15*time.Minute)
+			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeForbidden, constant.MsgIllegalRequest)
+			return
+		}
+
+		if uaReg.Match([]byte(ua)) {
+			log.Warnf(reqId, "Hit UA black list")
+			uaCache[ua] = true
+			config.GetRedisCli().Set(context.Background(), tools.GetRedisKeyFingerPrint(ctx.GetString(constant.RedisKeyBlockFP)), 1, 15*time.Minute)
+			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeForbidden, constant.MsgIllegalRequest)
+			return
+		}
+
+		ctx.Next()
+	}
 }
 
 func syncUAConfig() {

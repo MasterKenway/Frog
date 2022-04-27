@@ -54,11 +54,12 @@ type CaptchaRequest struct {
 }
 
 type CaptchaResponseInfo struct {
-	CaptchaCode    int    `json:"CaptchaCode"`
-	CaptchaMsg     string `json:"CaptchaMsg"`
-	EvilLevel      int    `json:"EvilLevel"`
-	GetCaptchaTime int    `json:"GetCaptchaTime"`
-	RequestId      string `json:"RequestId"`
+	Error          interface{} `json:"Error"`
+	CaptchaCode    int         `json:"CaptchaCode"`
+	CaptchaMsg     string      `json:"CaptchaMsg"`
+	EvilLevel      int         `json:"EvilLevel"`
+	GetCaptchaTime int         `json:"GetCaptchaTime"`
+	RequestId      string      `json:"RequestId"`
 }
 
 type RawLog struct {

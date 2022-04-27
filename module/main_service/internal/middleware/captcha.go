@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -19,38 +20,43 @@ import (
 )
 
 var (
-	captchaNeededUrl = map[string]bool{}
+	captchaNeededUrl = map[string]bool{
+		"CreateRegister": true,
+	}
 )
 
-func Captcha(ctx *gin.Context) {
-	var (
-		reqId        = ctx.GetString(constant.CtxKeyRequestID)
-		remoteIP     = ctx.GetString(constant.CtxKeyRemoteIP)
-		reqBody, _   = ctx.Get(constant.CtxKeyReqBody)
-		reqBodyBytes = reqBody.([]byte)
+func Captcha() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		var (
+			//reqId        = ctx.GetString(constant.CtxKeyRequestID)
+			//remoteIP     = ctx.GetString(constant.CtxKeyRemoteIP)
+			reqBody, _ = ctx.Get(constant.CtxKeyReqBody)
+			cmd        = ctx.GetString(constant.CtxKeyCmd)
 
-		url string
-	)
+			reqBodyBytes = reqBody.([]byte)
+		)
 
-	if _, ok := captchaNeededUrl[url]; ok {
-		ticket, _ := jsonparser.GetString(reqBodyBytes, "Ticket")
-		randStr, _ := jsonparser.GetString(reqBodyBytes, "RandStr")
+		if _, ok := captchaNeededUrl[cmd]; ok {
+			ticket, _ := jsonparser.GetString(reqBodyBytes, "Ticket")
+			randStr, _ := jsonparser.GetString(reqBodyBytes, "RandStr")
 
-		if ticket == "" || randStr == "" {
-			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaNeeded, constant.MsgCaptchaNeeded)
-			return
+			if ticket == "" || randStr == "" {
+				tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaNeeded, constant.MsgCaptchaNeeded)
+				return
+			}
+
+			//err := ValidateCaptcha(ticket, randStr, reqId, remoteIP)
+			//if err != nil {
+			//	tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaInvalid, constant.MsgCaptchaInvalid)
+			//	return
+			//}
 		}
 
-		err := ValidateCaptcha(ticket, randStr, reqId, remoteIP)
-		if err != nil {
-			tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeCaptchaInvalid, constant.MsgCaptchaInvalid)
-			return
-		}
+		ctx.Next()
 	}
-
-	ctx.Next()
 }
 
+// ValidateCaptcha 这个勾八东西要钱，字符串不为空就直接放行
 func ValidateCaptcha(ticket, randStr, reqId, ip string) error {
 	params := tools.TCParam{
 		"Action":       "DescribeCaptchaResult",
@@ -71,15 +77,19 @@ func ValidateCaptcha(ticket, randStr, reqId, ip string) error {
 	resp, err := http.Get("https://" + constant.CaptchaDomain + "?" + params.GetUrlParam())
 	if err != nil {
 		log.Errorf("ValidateCaptcha: %s", err.Error())
+		return err
 	}
 	defer resp.Body.Close()
 
 	respBody, _ := ioutil.ReadAll(resp.Body)
 
+	fmt.Printf("%s", string(respBody))
+
 	var captchaResp api_models.CaptchaResponse
 	err = json.Unmarshal(respBody, &captchaResp)
 	if err != nil {
 		log.Errorf(reqId, "failed unmarshal CaptchaResponse, err: %s", err.Error())
+		return err
 	}
 
 	if captchaResp.RetCode != 0 && captchaResp.CaptchaResponseInfo.CaptchaCode != 1 {

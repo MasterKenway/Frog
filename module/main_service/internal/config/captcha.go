@@ -1,7 +1,6 @@
 package config
 
 import (
-	"context"
 	"encoding/json"
 
 	"frog/module/common/constant"
@@ -23,17 +22,13 @@ func GetCaptchaConfig() *CaptchaConfig {
 		return captchaConfig
 	}
 
-	resp, err := GetEtcdCli().Get(context.Background(), constant.EtcdKeyCaptchaConfig)
+	confBytes, err := GetConfig(constant.EtcdKeyCaptchaConfig)
 	if err != nil {
 		panic(err)
 	}
 
-	if len(resp.Kvs) <= 0 {
-		panic(err)
-	}
-
 	captchaConfig = &CaptchaConfig{}
-	err = json.Unmarshal(resp.Kvs[0].Value, captchaConfig)
+	err = json.Unmarshal(confBytes, captchaConfig)
 	if err != nil {
 		panic(err)
 	}
