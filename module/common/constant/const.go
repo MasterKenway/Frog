@@ -29,13 +29,14 @@ const (
 	MsgIllegalRequest    = "Illegal Request"
 	MsgParamInvalid      = "Request Param Invalid"
 	MsgTimeStampOutdated = "Timestamp is Invalid"
+	MsgNonceInvalid      = "Nonce Invalid"
 	MsgNotLogin          = "Login Required"
 	MsgPwdOrUsernameErr  = "Password or Username Error"
 	MsgCaptchaNeeded     = "Captcha is Needed"
 	MsgCaptchaInvalid    = "Captcha is Invalid"
 	MsgEmailCodeInvalid  = "Email Code is Invalid"
 	MsgUserExists        = "Username Exists"
-	MsgRateLimit         = "request to frequently"
+	MsgRateLimit         = "Request to Frequently"
 
 	MsgInternalError = "Internal Error"
 )
@@ -48,6 +49,7 @@ const (
 	HeaderKeyNonce         = "x-nonce"
 	HeaderKeyRequestID     = "x-request-id"
 	HeaderKeyXForwardedFor = "x-forwarded-for"
+	HeaderKeyFingerPrint   = "x-finger-print"
 
 	CtxKeyRemoteIP    = "remote-ip"
 	CtxKeyRemotePort  = "remote-port"
@@ -58,6 +60,7 @@ const (
 	CtxKeyIsBot       = "is-bot"
 	CtxKeyIsQuickConn = "is-quick-conn"
 	CtxKeyUserInfo    = "x-user-info"
+	CtxKeyFingerPrint = "x-finger-print"
 )
 
 // RedisKey
@@ -68,6 +71,7 @@ const (
 	RedisKeyLoginCert = "login-status-"
 	RedisKeyRateLimit = "rate-limit-"
 	RedisKeyApiCache  = "api-cache-"
+	RedisKeyBlockFP   = "block-fp-"
 )
 
 // IP Stamp Constants
@@ -88,6 +92,7 @@ const (
 	EtcdKeyCaptchaConfig   = "captcha-config"
 	EtcdKeyEmailConfig     = "email-config"
 	EtcdKeyRateLimitConfig = "rate-limit-config"
+	EtcdKeyCosConfig       = "cos-config"
 )
 
 // Kafka Key

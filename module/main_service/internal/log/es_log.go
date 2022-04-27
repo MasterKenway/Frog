@@ -30,12 +30,8 @@ type customLogger struct {
 }
 
 func init() {
-	// First, define our level-handling logic.
-	//highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-	//	return lvl >= zapcore.ErrorLevel
-	//})
 	lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
-		return lvl < zapcore.ErrorLevel
+		return lvl < zapcore.FatalLevel
 	})
 
 	kw := KafkaWriter{
@@ -49,7 +45,7 @@ func init() {
 	kafkaEncoder := zapcore.NewJSONEncoder(encodeConfig)
 	kafkaCore := zapcore.NewCore(kafkaEncoder, topicError, lowPriority)
 	core := zapcore.NewTee(kafkaCore)
-	logger = customLogger{log: zap.New(core).WithOptions(zap.AddCallerSkip(1)).Sugar()}
+	logger = customLogger{log: zap.New(core).WithOptions(zap.AddCallerSkip(1)).WithOptions(zap.AddCaller()).Sugar()}
 }
 
 func Info(reqId string, a ...interface{}) {

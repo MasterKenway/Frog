@@ -169,7 +169,9 @@ func (l *LogConsumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sa
 		lock.Unlock()
 
 		if len(messages) > 100 {
-			consumeChan <- struct{}{}
+			go func() {
+				consumeChan <- struct{}{}
+			}()
 		}
 
 		session.MarkMessage(message, "")

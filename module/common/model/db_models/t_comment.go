@@ -8,7 +8,7 @@ import (
 type Comment struct {
 	Id         uint      `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`                    // 主键 ID
 	RentalId   uint      `gorm:"column:rental_id;type:int(11) unsigned;NOT NULL" json:"rental_id"`                        // 住房信息 ID
-	PublishUid uint      `gorm:"column:publish_uid;type:int(11) unsigned;NOT NULL" json:"publish_uid"`                    // 发布人 uid
+	PublishUid string    `gorm:"column:publish_uid;type:int(11) unsigned;NOT NULL" json:"publish_uid"`                    // 发布人 uid
 	Uid        string    `gorm:"column:uid;type:varchar(256);NOT NULL" json:"uid"`                                        // 用户 uid
 	Username   string    `gorm:"column:username;type:varchar(128);NOT NULL" json:"username"`                              // 用户名称
 	Avatar     string    `gorm:"column:avatar;type:varchar(1024);NOT NULL" json:"avatar"`                                 // 用户头像

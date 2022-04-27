@@ -31,12 +31,14 @@ func InterfaceHandler(ctx *gin.Context) {
 	reqBody, _ := ctx.Get(constant.CtxKeyReqBody)
 	controllerBytes, _, _, err := jsonparser.Get(reqBody.([]byte), "Data")
 	if err != nil {
+		log.Errorf(reqId, err.Error())
 		tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeBadRequest, constant.MsgParamInvalid)
 		return
 	}
 	controller := adapter()
 	err = json.Unmarshal(controllerBytes, &controller)
 	if err != nil {
+		log.Errorf(reqId, err.Error())
 		tools.CtxAbortWithCodeAndMsg(ctx, constant.CodeBadRequest, constant.MsgParamInvalid)
 		return
 	}
@@ -48,7 +50,7 @@ func InterfaceHandler(ctx *gin.Context) {
 			Code:      constant.CodeBadRequest,
 			Message:   err.Error(),
 		}})
-		log.Infof(reqId, string(msg))
+		log.Errorf(reqId, err.Error())
 		ctx.Writer.WriteHeader(http.StatusOK)
 		ctx.Writer.Write(msg)
 		return
