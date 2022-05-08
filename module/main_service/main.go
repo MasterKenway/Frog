@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"runtime/debug"
 	"syscall"
 	"time"
 
@@ -28,16 +29,17 @@ func main() {
 
 	r.Use(
 		gin.CustomRecovery(CustomRecovery()),
-		middleware.Logger,
-		middleware.RequestID,
-		middleware.AntiRepeat,
-		middleware.AntiBlackIPs,
-		middleware.AntiUA,
-		middleware.RateLimit,
-		middleware.Captcha,
-		middleware.ValidateLogin,
+		middleware.Logger(),
+		middleware.RequestID(),
+		middleware.AntiRepeat(),
+		middleware.AntiBlackIPs(),
+		middleware.AntiUA(),
+		//middleware.RateLimit(),
+		middleware.Captcha(),
+		middleware.ValidateLogin(),
 	)
 
+	r.POST(constant.InterfaceUpload, controller.UploadToCos())
 	r.POST(constant.InterfaceEntry, controller.InterfaceHandler)
 
 	srv := &http.Server{
@@ -52,6 +54,8 @@ func main() {
 			log.Fatalf("listen: %s\n", err.Error())
 		}
 	}()
+
+	fmt.Println("Server Stated...")
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.
@@ -77,11 +81,12 @@ func main() {
 func CustomRecovery() gin.RecoveryFunc {
 	return func(ctx *gin.Context, err interface{}) {
 		reqId := ctx.GetString(constant.CtxKeyRequestID)
-		log.Fatalf(reqId, "%+v", err)
+		log.Errorf(reqId, "%v\n%s", err, string(debug.Stack()))
 		ctx.JSON(http.StatusOK, api_models.APIResponse{ResponseInfo: api_models.ResponseInfo{
 			Code:      constant.CodeInternalError,
 			Error:     err,
 			RequestID: reqId,
 		}})
+		ctx.Abort()
 	}
 }

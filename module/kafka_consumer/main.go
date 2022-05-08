@@ -1,14 +1,15 @@
 package main
 
 import (
-	"github.com/jasonlvhit/gocron"
 	"os"
 	"os/signal"
 	"syscall"
 
 	"frog/module/common/tools"
-	"frog/module/kafka_consumer/log"
-	"frog/module/kafka_consumer/service"
+	"frog/module/kafka_consumer/internel/log"
+	"frog/module/kafka_consumer/internel/service"
+
+	"github.com/jasonlvhit/gocron"
 )
 
 func main() {
@@ -22,6 +23,8 @@ func main() {
 
 	service.ConsumeLog()
 	go service.ConsumeLoop()
+
+	log.Info("Server Stated...")
 
 	// Wait for interrupt signal to gracefully shutdown the server with
 	// a timeout of 5 seconds.

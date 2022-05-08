@@ -17,7 +17,10 @@ import (
 
 var (
 	LoginRequiredUrl = map[string]bool{
-		"CreateRentalInfo": true,
+		constant.ApiRentalInfoCreate: true,
+		constant.ApiCommentCreate:    true,
+		constant.ApiNotificationList: true,
+		constant.ApiNotificationRead: true,
 	}
 )
 

@@ -7,6 +7,7 @@ import (
 	"frog/module/main_service/internal/controller/auth/login"
 	"frog/module/main_service/internal/controller/auth/register"
 	"frog/module/main_service/internal/controller/comment"
+	"frog/module/main_service/internal/controller/notification"
 	"frog/module/main_service/internal/controller/rental_info"
 )
 
@@ -18,8 +19,13 @@ var (
 
 		constant.ApiRentalInfoDetail: rental_info.GetRentalInfoDetailController,
 		constant.ApiRentalInfoList:   rental_info.GetRentalInfoListController,
+		constant.ApiRentalInfoCols:   rental_info.GetRentalInfoColsController,
 		constant.ApiRentalInfoCreate: rental_info.GetRentalInfoCreateController,
 
 		constant.ApiCommentCreate: comment.GetCommentCreateController,
+		constant.ApiCommentList:   comment.GetCommentListController,
+
+		constant.ApiNotificationRead: notification.GetNotificationReadController,
+		constant.ApiNotificationList: notification.GetNotificationListController,
 	}
 )

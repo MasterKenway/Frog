@@ -23,8 +23,8 @@ func GetLoginRequestAdapter() api_models.ApiInterface {
 }
 
 type Request struct {
-	Username string `json:"username,omitempty" validate:"required"`
-	Password string `json:"password,omitempty" validate:"required"`
+	Username string `json:"Username,omitempty" validate:"required"`
+	Password string `json:"Password,omitempty" validate:"required"`
 }
 
 func (r Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError) {
@@ -58,7 +58,7 @@ func (r Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError)
 	}
 
 	cookieKey := uuid.New().String()
-	userInfo := RedisUserInfo{Username: user.Username, CookieKey: cookieKey}
+	userInfo := RedisUserInfo{Username: user.Username, CookieKey: cookieKey, LoginTime: time.Now(), Uid: user.Uid}
 	config.GetRedisCli().Set(context.Background(), tools.GetRedisKeyLoginCert(cookieKey), userInfo, 30*time.Minute)
 	return userInfo, nil
 }

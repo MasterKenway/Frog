@@ -14,6 +14,7 @@ import (
 	"frog/module/main_service/internal/tools"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -38,6 +39,13 @@ func (r *Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError
 
 	emailCode, err := config.GetRedisCli().Get(context.Background(), emailCodeRedisKey).Result()
 	if err != nil {
+		if err == redis.Nil {
+			return nil, &api_models.APIError{
+				Code:    constant.CodeEmailCodeInvalid,
+				Message: constant.MsgEmailCodeInvalid,
+			}
+		}
+
 		log.Errorf(reqId, "failed to get %s from redis, %s", emailCodeRedisKey, err.Error())
 		return nil, &api_models.APIError{
 			Code:    constant.CodeInternalError,
@@ -52,19 +60,19 @@ func (r *Request) GetResult(ctx *gin.Context) (interface{}, *api_models.APIError
 		}
 	}
 
-	err = config.GetReadOnlyMysqlCli().Model(&db_models.User{}).Where("username = ?", r.Email).Scan(&user).Error
-	if err != nil {
-		if err != gorm.ErrRecordNotFound {
+	err = config.GetReadOnlyMysqlCli().Model(&db_models.User{}).Where("username = ?", r.Email).First(&user).Error
+	if err != gorm.ErrRecordNotFound {
+		if err != nil {
 			log.Errorf(reqId, "failed to query user from db, %s", err.Error())
 			return nil, &api_models.APIError{
 				Code:    constant.CodeInternalError,
 				Message: constant.MsgInternalError,
 			}
-		}
-	} else {
-		return nil, &api_models.APIError{
-			Code:    constant.CodeUserExists,
-			Message: constant.MsgUserExists,
+		} else {
+			return nil, &api_models.APIError{
+				Code:    constant.CodeUserExists,
+				Message: constant.MsgUserExists,
+			}
 		}
 	}
 

@@ -11,7 +11,12 @@ const (
 
 	ApiRentalInfoDetail = "DescribeRentalInfoDetail"
 	ApiRentalInfoList   = "DescribeRentalInfoList"
+	ApiRentalInfoCols   = "DescribeRentalInfoCols"
 	ApiRentalInfoCreate = "CreateRentalInfo"
 
 	ApiCommentCreate = "CreateComment"
+	ApiCommentList   = "DescribeComment"
+
+	ApiNotificationList = "DescribeNotificationList"
+	ApiNotificationRead = "DescribeNotificationRead"
 )

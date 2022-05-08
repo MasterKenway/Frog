@@ -64,7 +64,7 @@ func GetModelCols(model interface{}) map[string]bool {
 		if len(kv) != 2 {
 			panic(perrors.New("error tags"))
 		}
-		colsMap[kv[0]] = true
+		colsMap[kv[1]] = true
 	}
 
 	return colsMap
@@ -72,10 +72,10 @@ func GetModelCols(model interface{}) map[string]bool {
 
 func Pagination(slice interface{}, pageNum, pageSize int) (reflect.Value, error) {
 	sliceType := reflect.TypeOf(slice)
-	res := reflect.MakeSlice(sliceType, pageSize, pageSize)
+	res := reflect.MakeSlice(sliceType, 0, pageSize)
 	if sliceType.Kind() == reflect.Slice {
 		values := reflect.ValueOf(slice)
-		for i := (pageNum - 1) * pageSize; i < res.Len() && i < pageNum*pageSize; i++ {
+		for i := (pageNum - 1) * pageSize; i < values.Len() && i < pageNum*pageSize; i++ {
 			res = reflect.Append(res, values.Index(i))
 		}
 	} else {

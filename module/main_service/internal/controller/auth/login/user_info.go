@@ -6,12 +6,13 @@ import (
 )
 
 type RedisUserInfo struct {
-	CookieKey string    `json:"cookie_key"`
-	Username  string    `json:"username,omitempty"`
-	Email     string    `json:"email,omitempty"`
-	LoginIPs  []string  `json:"login_ips,omitempty"`
-	UserAgent string    `json:"user_agent,omitempty"`
-	LoginTime time.Time `json:"login_time,omitempty"`
+	Uid       string    `json:"Uid"`
+	CookieKey string    `json:"CookieKey"`
+	Username  string    `json:"Username,omitempty"`
+	Email     string    `json:"Email,omitempty"`
+	LoginIPs  []string  `json:"LoginIPs,omitempty"`
+	UserAgent string    `json:"UserAgent,omitempty"`
+	LoginTime time.Time `json:"LoginTime,omitempty"`
 }
 
 func (r RedisUserInfo) MarshalBinary() (data []byte, err error) {
