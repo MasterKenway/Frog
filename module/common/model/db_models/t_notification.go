@@ -9,7 +9,7 @@ import (
 type Notification struct {
 	Id         uint          `gorm:"column:id;type:int(11) unsigned;primary_key;AUTO_INCREMENT" json:"id"`                    // 主键 ID
 	Type       int           `gorm:"column:type;type:int(11);NOT NULL" json:"type"`                                           // 通知类型
-	Uid        int           `gorm:"column:uid;type:int(11);NOT NULL" json:"uid"`                                             // 通知用户
+	Uid        string        `gorm:"column:uid;type:int(11);NOT NULL" json:"uid"`                                             // 通知用户
 	CommentId  sql.NullInt32 `gorm:"column:comment_id;type:int(11) unsigned" json:"comment_id"`                               // 评论
 	RentalId   sql.NullInt32 `gorm:"column:rental_id;type:int(11) unsigned" json:"rental_id"`                                 // 租房信息 ID
 	Content    string        `gorm:"column:content;type:varchar(128);NOT NULL" json:"content"`                                // 通知内容

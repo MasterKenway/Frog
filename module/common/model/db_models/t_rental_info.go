@@ -27,7 +27,7 @@ type RentalInfo struct {
 	Cover         string    `gorm:"column:cover;NOT NULL"`                                 // 封面 (COS 链接)
 	Pics          string    `gorm:"column:pics;NOT NULL"`                                  // 房子照片 (COS 链接)
 	Area          float64   `gorm:"column:area;NOT NULL"`                                  // 面积
-	Price         float64   `gorm:"column:price;NOT NULL"`                                 // 价格
+	Price         int       `gorm:"column:price;NOT NULL"`                                 // 价格
 	RentAvailTime string    `gorm:"column:rent_avail_time;NOT NULL"`                       // 入住时间
 	RentTermFrom  int       `gorm:"column:rent_term_from;NOT NULL"`                        // 租房周期(最低 n 个月)
 	RentTermTo    int       `gorm:"column:rent_term_to;NOT NULL"`                          // 租房周期(最高 n 个月)

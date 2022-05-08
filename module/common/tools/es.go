@@ -37,6 +37,12 @@ type ESResponse struct {
 	}
 }
 
+type Hits []Hit
+
+type Hit struct {
+	Source json.RawMessage `json:"_source"`
+}
+
 func GetModelFromESResp(resp *esapi.Response, target interface{}) error {
 	if reflect.TypeOf(target).Kind() != reflect.Ptr {
 		return perrors.Errorf("kind %s is invalid", reflect.TypeOf(target).String())
@@ -57,5 +63,26 @@ func GetModelFromESResp(resp *esapi.Response, target interface{}) error {
 		return ErrESRecordNotFound
 	}
 
-	return json.Unmarshal(respObject.Hits.Hits, target)
+	var hits Hits
+	err = json.Unmarshal(respObject.Hits.Hits, &hits)
+	if err != nil {
+		return err
+	}
+
+	targetValues := reflect.ValueOf(target)
+	targetElem := targetValues.Elem()
+	if target == nil {
+		target = reflect.MakeSlice(reflect.SliceOf(targetValues.Type()), 0, respObject.Hits.Total.Value)
+	}
+	for _, hit := range hits {
+		item := reflect.New(targetElem.Type().Elem()).Interface()
+
+		err := json.Unmarshal(hit.Source, &item)
+		if err != nil {
+			return err
+		}
+		targetElem.Set(reflect.Append(targetElem, reflect.ValueOf(item).Elem()))
+	}
+
+	return nil
 }

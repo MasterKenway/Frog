@@ -107,16 +107,17 @@ var rentalInfoMapping = `
 //  租房信息表
 type RentalInfo struct {
 	RequestId     string     `gorm:"-" json:"-"`
+	ID            uint       `gorm:"column:id;primary_key;AUTO_INCREMENT" json:"id"`                                          // 主键 ID
 	Uid           string     `gorm:"column:uid;type:varchar(256);NOT NULL" json:"uid"`                                        // 发布消息用户
 	Title         string     `gorm:"column:title;type:varchar(128);NOT NULL" json:"title"`                                    // 标题
 	ObfsTitle     string     `json:"obfs_title"`                                                                              // 混淆标题
 	Cover         string     `gorm:"column:cover;type:varchar(1024);NOT NULL" json:"cover"`                                   // 封面 (COS 链接)
 	Pics          []string   `gorm:"column:pics;type:text;NOT NULL" json:"pics"`                                              // 房子照片 (COS 链接)
 	Area          float64    `gorm:"column:area;type:float;NOT NULL" json:"area"`                                             // 面积
-	Price         float64    `gorm:"column:price;type:float;NOT NULL" json:"price"`                                           // 价格
+	Price         []float64  `gorm:"column:price;type:float;NOT NULL" json:"price"`                                           // 价格
 	RentAvailTime string     `gorm:"column:rent_avail_time;type:varchar(64);NOT NULL" json:"rent_avail_time"`                 // 入住时间
-	RentTermFrom  int        `gorm:"column:rent_term_from;NOT NULL"`                                                          // 租房周期(最低 n 个月)
-	RentTermTo    int        `gorm:"column:rent_term_to;NOT NULL"`                                                            // 租房周期(最高 n 个月)
+	RentTermFrom  int        `gorm:"column:rent_term_from;NOT NULL" json:"rent_term_from"`                                    // 租房周期(最低 n 个月)
+	RentTermTo    int        `gorm:"column:rent_term_to;NOT NULL" json:"rent_term_to"`                                        // 租房周期(最高 n 个月)
 	Province      string     `gorm:"column:province;type:varchar(256);NOT NULL" json:"province"`                              // 省份
 	City          string     `gorm:"column:city;type:varchar(256);NOT NULL" json:"city"`                                      // 城市
 	Location      string     `gorm:"column:location;type:varchar(256);NOT NULL" json:"location"`                              //  位置
